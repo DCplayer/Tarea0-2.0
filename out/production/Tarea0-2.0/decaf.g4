@@ -1,6 +1,5 @@
 grammar decaf;
 
-prog: ID;
 ID: LETTER (LETTER|DIGIT)*;
 NUM: DIGIT DIGIT*;
 CHAR: LETTER;
@@ -8,96 +7,79 @@ fragment DIGIT: [0-9];
 fragment LETTER: ('a'..'z')|('A'..'Z');
 
 
-PROGRAM:
-            'class' 'Program' '{' DECLARATION* '}';
-DECLARATION:
-            STRUCTDECLARATION
-           |VARDECLARATION
-           |METHODDECLARATION;
-VARDECLARATION:
-            VARTYPE ID ';'
-           |VARTYPE ID '[' NUM ']' ';';
-STRUCTDECLARATION:
-            'struct' ID '{' VARDECLARATION* '}';
-VARTYPE:
+program:
+            'class' 'Program' '{' declaration* '}';
+declaration:
+            structDeclaration
+           |varDeclaration
+           |methodDeclaration;
+varDeclaration:
+            varType ID ';'
+           |varType ID '[' NUM ']' ';';
+structDeclaration:
+            'struct' ID '{' varDeclaration* '}';
+varType:
             'int'
            |'char'
            |'boolean'
            |'struct' ID
-           |STRUCTDECLARATION
+           |structDeclaration
            |'void';
-METHODDECLARATION:
-            METHODTYPE ID '(' PARAMETER* ')' BLOCK;
-METHODTYPE:
+methodDeclaration:
+            methodType ID '(' parameter* ')' block;
+methodType:
             'int'
            |'char'
            |'boolean'
            |'void';
-PARAMETER:
-            PARAMETERTYPE ID
-           |PARAMETERTYPE ID '[' ']';
-PARAMETERTYPE:
+parameter:
+            parameterType ID
+           |parameterType ID '[' ']';
+parameterType:
             'int'
            |'char'
            |'boolean';
-BLOCK:
-            '{' VARDECLARATION* STATEMENT* '}';
-STATEMENT:
-            'if' '(' EXPRESSION* ')' BLOCK |'if' '(' EXPRESSION* ')' BLOCK 'else' BLOCK
-           |'while' '(' EXPRESSION ')' BLOCK
-           |'return' ';' |'return' EXPRESSION ';'
-           |METHODCALL ';'
-           |BLOCK
-           |LOCATION '=' EXPRESSION
-           |';' |EXPRESSION ';';
-LOCATION:
-            (ID | ID '[' EXPRESSION ']')
-           |(ID | ID '[' EXPRESSION ']') '.' LOCATION;
-EXPRESSION:
-            LOCATION COMPLEMENTOEXPRESSION
-           |METHODCALL COMPLEMENTOEXPRESSION
-           |LITERAL COMPLEMENTOEXPRESSION
-           |'-' EXPRESSION COMPLEMENTOEXPRESSION
-           |'!' EXPRESSION COMPLEMENTOEXPRESSION
-           |'(' EXPRESSION ')' COMPLEMENTOEXPRESSION;
-COMPLEMENTOEXPRESSION:
-            OP EXPRESSION
-           |WS;
-METHODCALL:
-            ID '(' ARG (','ARG)*')' | ID '(' ')';
-ARG:
-            EXPRESSION;
-OP:
-            ARITH_OP
-           |REL_OP
-           |EQ_OP
-           |COND_OP;
-ARITH_OP:
-            '+'
-           |'-'
-           |'*'
-           |'/'
-           |'%';
-REL_OP:
-           '<'
-           |'>'
-           |'<='
-           |'>=';
-EQ_OP:
-            '=='
-           |'!=';
-COND_OP:
-            '&&'
-           |'||';
-LITERAL:
-            INT_LITERAL
-           |CHAR_LITERAL
-           |BOOL_LITERAL;
-INT_LITERAL:
+block:
+            '{' varDeclaration* statement* '}';
+statement:
+            'if' '(' expression* ')' block |'if' '(' expression* ')' block 'else' block
+           |'while' '(' expression')' block
+           |'return' ';' |'return' expression';'
+           |methodCall ';'
+           |block
+           |location '=' expression
+           |';' |expression ';';
+location:
+            (ID | ID '[' expression']')
+           |(ID | ID '[' expression ']') '.' location;
+
+expression:
+            location
+           |methodCall
+           |literal
+           |expression op=('*'|'/'|'%') expression
+           |expression op=('+'|'-') expression
+           |expression op=('<'|'>'|'<='|'>=') expression
+           |expression op=('=='|'!=') expression
+           |expression op=('&&'|'||') expression
+           |'-' expression
+           |'!' expression
+           |'(' expression ')';
+
+methodCall:
+            ID '(' arg (','arg)*')' | ID '(' ')';
+arg:
+            expression;
+
+literal:
+            int_literal
+           |char_literal
+           |bool_literal;
+int_literal:
             NUM;
-CHAR_LITERAL:
+char_literal:
             '\'' CHAR '\'';
-BOOL_LITERAL:
+bool_literal:
             'true'
            |'false';
 
