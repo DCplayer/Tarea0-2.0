@@ -572,29 +572,17 @@ public interface decafListener extends ParseTreeListener {
 	 */
 	void exitSecondArithOpExp(decafParser.SecondArithOpExpContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code methodWithParam}
+	 * Enter a parse tree produced by the {@code methodCallDecl}
 	 * labeled alternative in {@link decafParser#methodCall}.
 	 * @param ctx the parse tree
 	 */
-	void enterMethodWithParam(decafParser.MethodWithParamContext ctx);
+	void enterMethodCallDecl(decafParser.MethodCallDeclContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code methodWithParam}
+	 * Exit a parse tree produced by the {@code methodCallDecl}
 	 * labeled alternative in {@link decafParser#methodCall}.
 	 * @param ctx the parse tree
 	 */
-	void exitMethodWithParam(decafParser.MethodWithParamContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code methodNoParam}
-	 * labeled alternative in {@link decafParser#methodCall}.
-	 * @param ctx the parse tree
-	 */
-	void enterMethodNoParam(decafParser.MethodNoParamContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code methodNoParam}
-	 * labeled alternative in {@link decafParser#methodCall}.
-	 * @param ctx the parse tree
-	 */
-	void exitMethodNoParam(decafParser.MethodNoParamContext ctx);
+	void exitMethodCallDecl(decafParser.MethodCallDeclContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code expressionArg}
 	 * labeled alternative in {@link decafParser#arg}.
@@ -632,63 +620,27 @@ public interface decafListener extends ParseTreeListener {
 	 */
 	void exitLiteralChar(decafParser.LiteralCharContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code literalBool}
+	 * Enter a parse tree produced by the {@code literalTrue}
 	 * labeled alternative in {@link decafParser#literal}.
 	 * @param ctx the parse tree
 	 */
-	void enterLiteralBool(decafParser.LiteralBoolContext ctx);
+	void enterLiteralTrue(decafParser.LiteralTrueContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code literalBool}
+	 * Exit a parse tree produced by the {@code literalTrue}
 	 * labeled alternative in {@link decafParser#literal}.
 	 * @param ctx the parse tree
 	 */
-	void exitLiteralBool(decafParser.LiteralBoolContext ctx);
+	void exitLiteralTrue(decafParser.LiteralTrueContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code literalIntDef}
-	 * labeled alternative in {@link decafParser#int_literal}.
+	 * Enter a parse tree produced by the {@code literalFalse}
+	 * labeled alternative in {@link decafParser#literal}.
 	 * @param ctx the parse tree
 	 */
-	void enterLiteralIntDef(decafParser.LiteralIntDefContext ctx);
+	void enterLiteralFalse(decafParser.LiteralFalseContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code literalIntDef}
-	 * labeled alternative in {@link decafParser#int_literal}.
+	 * Exit a parse tree produced by the {@code literalFalse}
+	 * labeled alternative in {@link decafParser#literal}.
 	 * @param ctx the parse tree
 	 */
-	void exitLiteralIntDef(decafParser.LiteralIntDefContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code literalCharDef}
-	 * labeled alternative in {@link decafParser#char_literal}.
-	 * @param ctx the parse tree
-	 */
-	void enterLiteralCharDef(decafParser.LiteralCharDefContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code literalCharDef}
-	 * labeled alternative in {@link decafParser#char_literal}.
-	 * @param ctx the parse tree
-	 */
-	void exitLiteralCharDef(decafParser.LiteralCharDefContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code trueLiteralBoolDef}
-	 * labeled alternative in {@link decafParser#bool_literal}.
-	 * @param ctx the parse tree
-	 */
-	void enterTrueLiteralBoolDef(decafParser.TrueLiteralBoolDefContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code trueLiteralBoolDef}
-	 * labeled alternative in {@link decafParser#bool_literal}.
-	 * @param ctx the parse tree
-	 */
-	void exitTrueLiteralBoolDef(decafParser.TrueLiteralBoolDefContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code falseLiteralBoolDef}
-	 * labeled alternative in {@link decafParser#bool_literal}.
-	 * @param ctx the parse tree
-	 */
-	void enterFalseLiteralBoolDef(decafParser.FalseLiteralBoolDefContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code falseLiteralBoolDef}
-	 * labeled alternative in {@link decafParser#bool_literal}.
-	 * @param ctx the parse tree
-	 */
-	void exitFalseLiteralBoolDef(decafParser.FalseLiteralBoolDefContext ctx);
+	void exitLiteralFalse(decafParser.LiteralFalseContext ctx);
 }

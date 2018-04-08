@@ -70,21 +70,14 @@ expression:
            |'(' expression ')'                          # parentExp;
 
 methodCall:
-            ID '(' arg (','arg)*')'                     # methodWithParam
-           |ID '(' ')'                                  # methodNoParam ;
+            ID '(' (arg (','arg)*)?  ')'                # methodCallDecl;
 arg:
             expression                                  # expressionArg ;
 
 literal:
-            int_literal                                 # literalInt
-           |char_literal                                # literalChar
-           |bool_literal                                # literalBool ;
-int_literal:
-            NUM                                         # literalIntDef;
-char_literal:
-            '\'' CHAR '\''                              # literalCharDef;
-bool_literal:
-            'true'                                      # trueLiteralBoolDef
-           |'false'                                     # falseLiteralBoolDef;
+            NUM                                         # literalInt
+           |'\'' CHAR '\''                              # literalChar
+           | 'true'                                     # literalTrue
+           |'false'                                     # literalFalse;
 
 WS : [ \t\r\n]+ -> skip;

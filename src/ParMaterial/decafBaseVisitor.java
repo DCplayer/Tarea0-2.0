@@ -346,14 +346,7 @@ public class decafBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitMethodWithParam(decafParser.MethodWithParamContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitMethodNoParam(decafParser.MethodNoParamContext ctx) { return visitChildren(ctx); }
+	@Override public T visitMethodCallDecl(decafParser.MethodCallDeclContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -381,33 +374,12 @@ public class decafBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitLiteralBool(decafParser.LiteralBoolContext ctx) { return visitChildren(ctx); }
+	@Override public T visitLiteralTrue(decafParser.LiteralTrueContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitLiteralIntDef(decafParser.LiteralIntDefContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitLiteralCharDef(decafParser.LiteralCharDefContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitTrueLiteralBoolDef(decafParser.TrueLiteralBoolDefContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitFalseLiteralBoolDef(decafParser.FalseLiteralBoolDefContext ctx) { return visitChildren(ctx); }
+	@Override public T visitLiteralFalse(decafParser.LiteralFalseContext ctx) { return visitChildren(ctx); }
 }

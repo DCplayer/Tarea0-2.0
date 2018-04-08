@@ -580,25 +580,13 @@ public class decafBaseListener implements decafListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterMethodWithParam(decafParser.MethodWithParamContext ctx) { }
+	@Override public void enterMethodCallDecl(decafParser.MethodCallDeclContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitMethodWithParam(decafParser.MethodWithParamContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterMethodNoParam(decafParser.MethodNoParamContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitMethodNoParam(decafParser.MethodNoParamContext ctx) { }
+	@Override public void exitMethodCallDecl(decafParser.MethodCallDeclContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -640,61 +628,25 @@ public class decafBaseListener implements decafListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLiteralBool(decafParser.LiteralBoolContext ctx) { }
+	@Override public void enterLiteralTrue(decafParser.LiteralTrueContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLiteralBool(decafParser.LiteralBoolContext ctx) { }
+	@Override public void exitLiteralTrue(decafParser.LiteralTrueContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLiteralIntDef(decafParser.LiteralIntDefContext ctx) { }
+	@Override public void enterLiteralFalse(decafParser.LiteralFalseContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLiteralIntDef(decafParser.LiteralIntDefContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterLiteralCharDef(decafParser.LiteralCharDefContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitLiteralCharDef(decafParser.LiteralCharDefContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterTrueLiteralBoolDef(decafParser.TrueLiteralBoolDefContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitTrueLiteralBoolDef(decafParser.TrueLiteralBoolDefContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterFalseLiteralBoolDef(decafParser.FalseLiteralBoolDefContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitFalseLiteralBoolDef(decafParser.FalseLiteralBoolDefContext ctx) { }
+	@Override public void exitLiteralFalse(decafParser.LiteralFalseContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

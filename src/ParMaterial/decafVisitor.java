@@ -340,19 +340,12 @@ public interface decafVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitSecondArithOpExp(decafParser.SecondArithOpExpContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code methodWithParam}
+	 * Visit a parse tree produced by the {@code methodCallDecl}
 	 * labeled alternative in {@link decafParser#methodCall}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitMethodWithParam(decafParser.MethodWithParamContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code methodNoParam}
-	 * labeled alternative in {@link decafParser#methodCall}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitMethodNoParam(decafParser.MethodNoParamContext ctx);
+	T visitMethodCallDecl(decafParser.MethodCallDeclContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code expressionArg}
 	 * labeled alternative in {@link decafParser#arg}.
@@ -375,38 +368,17 @@ public interface decafVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitLiteralChar(decafParser.LiteralCharContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code literalBool}
+	 * Visit a parse tree produced by the {@code literalTrue}
 	 * labeled alternative in {@link decafParser#literal}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLiteralBool(decafParser.LiteralBoolContext ctx);
+	T visitLiteralTrue(decafParser.LiteralTrueContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code literalIntDef}
-	 * labeled alternative in {@link decafParser#int_literal}.
+	 * Visit a parse tree produced by the {@code literalFalse}
+	 * labeled alternative in {@link decafParser#literal}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLiteralIntDef(decafParser.LiteralIntDefContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code literalCharDef}
-	 * labeled alternative in {@link decafParser#char_literal}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLiteralCharDef(decafParser.LiteralCharDefContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code trueLiteralBoolDef}
-	 * labeled alternative in {@link decafParser#bool_literal}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitTrueLiteralBoolDef(decafParser.TrueLiteralBoolDefContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code falseLiteralBoolDef}
-	 * labeled alternative in {@link decafParser#bool_literal}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFalseLiteralBoolDef(decafParser.FalseLiteralBoolDefContext ctx);
+	T visitLiteralFalse(decafParser.LiteralFalseContext ctx);
 }

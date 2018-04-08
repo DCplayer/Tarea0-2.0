@@ -2,8 +2,19 @@ package Principal;
 
 import ParMaterial.decafBaseVisitor;
 import ParMaterial.decafParser;
+import parser.Method;
+import parser.SyTable;
+import parser.Tuplas;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
 
 public class Visitador extends decafBaseVisitor<String> {
+    private Stack verificadorAmbitos = new Stack();
+    private ArrayList<String> argSignature = new ArrayList<>();
+    private ArrayList<String> argType = new ArrayList<>();
+    private String type;
 
     /**
      * {@inheritDoc}
@@ -12,6 +23,7 @@ public class Visitador extends decafBaseVisitor<String> {
      * {@link #visitChildren} on {@code ctx}.</p>
      */
     @Override public String visitInitProgram(decafParser.InitProgramContext ctx) { return visitChildren(ctx); }
+
     /**
      * {@inheritDoc}
      *
@@ -340,68 +352,112 @@ public class Visitador extends decafBaseVisitor<String> {
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitMethodWithParam(decafParser.MethodWithParamContext ctx) { return visitChildren(ctx); }
+    @Override public String visitMethodCallDecl(decafParser.MethodCallDeclContext ctx) {
+        //Chequear primero que existe el metodo
+        String identificador = ctx.ID().getText();
+        SyTable ambitoActual = (SyTable) verificadorAmbitos.peek();
+
+        boolean existente = false;
+        Method temporal = new Method(null, null, null, null, null);
+        for (Tuplas t: ambitoActual.getTablaDeSimbolos()){
+            if(t.getNombre().equals(identificador)){
+                existente = true;
+                temporal = (Method) t.getElemento();
+
+            }
+        }
+        if(existente){
+            //Si existe el metodo, crear una lista de strings con le tipo de datos que es cada uno
+            //Verificar si ese tipo de datos es parte del signature del metodo
+            List<decafParser.ArgContext> argumentos = ctx.arg();
+            for(decafParser.ArgContext a: argumentos){
+                String value = visit(a);
+                argSignature.add(value);
+                argType.add(type);
+            }
+            boolean firmaExistente = false;
+            for(ArrayList<String> ar: temporal.getTypeValue()){
+                if(ar.equals(argType)){
+                    firmaExistente = true;
+                }
+            }
+            if(firmaExistente){
+                //si existe una firma, dentro de los metodos con estos parametros, entonces
+                //Se puede ejecutar la linea de codigo de manera correcta
+            }
+            else {
+                //Error porque no existe ninguna firma del metodo con estos parametros
+            }
+
+
+
+        }
+        else{
+            //Mostrar error porque el metodo no existe
+
+        }
+
+
+
+        return visitChildren(ctx);
+    }
+
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitMethodNoParam(decafParser.MethodNoParamContext ctx) { return visitChildren(ctx); }
+    @Override public String visitExpressionArg(decafParser.ExpressionArgContext ctx) {
+        //Expresion de argumento, determinara el valor del argumento y el tipo del mismo
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitExpressionArg(decafParser.ExpressionArgContext ctx) { return visitChildren(ctx); }
+    @Override public String visitLiteralInt(decafParser.LiteralIntContext ctx) {
+        //Valor Numerico: NUM
+        type = "int";
+        return ctx.NUM().getText();
+    }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitLiteralInt(decafParser.LiteralIntContext ctx) { return visitChildren(ctx); }
+    @Override public String visitLiteralChar(decafParser.LiteralCharContext ctx) {
+        //Valor String: CHAR
+        type  = "char";
+        return ctx.CHAR().getText();
+    }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitLiteralChar(decafParser.LiteralCharContext ctx) { return visitChildren(ctx); }
+    @Override public String  visitLiteralTrue(decafParser.LiteralTrueContext ctx) {
+        //Valor booleano: Verdadero
+        type = "boolean";
+        return "true";
+    }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String  visitLiteralBool(decafParser.LiteralBoolContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public String visitLiteralIntDef(decafParser.LiteralIntDefContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public String visitLiteralCharDef(decafParser.LiteralCharDefContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public String visitTrueLiteralBoolDef(decafParser.TrueLiteralBoolDefContext ctx) { return visitChildren(ctx); }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     */
-    @Override public String visitFalseLiteralBoolDef(decafParser.FalseLiteralBoolDefContext ctx) { return visitChildren(ctx); }
+    @Override public String  visitLiteralFalse(decafParser.LiteralFalseContext ctx) {
+        //Valor booleano: Falso
+        type = "boolean";
+        return "false";
+
+    }
+
+
+
 }
