@@ -87,4 +87,4 @@ bool_literal:
             'true'                                      # trueLiteralBoolDef
            |'false'                                     # falseLiteralBoolDef;
 
-WS : [ \t\r\n]+ -> skip
+WS : [ \t\r\n]+ -> skip;
