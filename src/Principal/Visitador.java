@@ -381,16 +381,9 @@ public class Visitador extends decafBaseVisitor<String> {
                     firmaExistente = true;
                 }
             }
-            if(firmaExistente){
-                //si existe una firma, dentro de los metodos con estos parametros, entonces
-                //Se puede ejecutar la linea de codigo de manera correcta
+            if(!firmaExistente){
+                //Mostrar error porque del metodo, no existe con esa combinacion de parametros
             }
-            else {
-                //Error porque no existe ninguna firma del metodo con estos parametros
-            }
-
-
-
         }
         else{
             //Mostrar error porque el metodo no existe
