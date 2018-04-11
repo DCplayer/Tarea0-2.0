@@ -15,6 +15,7 @@ public class Visitador extends decafBaseVisitor<String> {
     private ArrayList<String> argSignature = new ArrayList<>();
     private ArrayList<String> argType = new ArrayList<>();
     private String type;
+    private String error = "";
 
     /**
      * {@inheritDoc}
@@ -317,7 +318,10 @@ public class Visitador extends decafBaseVisitor<String> {
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitParentExp(decafParser.ParentExpContext ctx) { return visitChildren(ctx); }
+    @Override public String visitParentExp(decafParser.ParentExpContext ctx) {
+        visit(ctx.expression());
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
@@ -331,7 +335,10 @@ public class Visitador extends decafBaseVisitor<String> {
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitNotExp(decafParser.NotExpContext ctx) { return visitChildren(ctx); }
+    @Override public String visitNotExp(decafParser.NotExpContext ctx) {
+        //return value de expresion? tiene que ser booleano siempre, los
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
@@ -383,15 +390,14 @@ public class Visitador extends decafBaseVisitor<String> {
             }
             if(!firmaExistente){
                 //Mostrar error porque del metodo, no existe con esa combinacion de parametros
+                return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+ ". Firma no existente.\n";
             }
         }
         else{
             //Mostrar error porque el metodo no existe
+            return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+ ". \""+ctx.ID().getText()+"\" , Method unexistent.\n";
 
         }
-
-
-
         return visitChildren(ctx);
     }
 
