@@ -150,7 +150,10 @@ public class Visitador extends decafBaseVisitor<String> {
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitParamType(decafParser.ParamTypeContext ctx) { return visitChildren(ctx); }
+    @Override public String visitParamType(decafParser.ParamTypeContext ctx) {
+
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
@@ -278,7 +281,8 @@ public class Visitador extends decafBaseVisitor<String> {
      */
     @Override public String visitRelOpExp(decafParser.RelOpExpContext ctx) { return visitChildren(ctx); }
     /**
-     * {@inheritDoc}
+     * {@inheritDoc
+     * }
      *
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
@@ -297,7 +301,59 @@ public class Visitador extends decafBaseVisitor<String> {
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitCondOpExp(decafParser.CondOpExpContext ctx) { return visitChildren(ctx); }
+    @Override public String visitCondOpExp(decafParser.CondOpExpContext ctx) {
+        String operaton = ctx.op.getText();
+        if(operaton.equals("&&") || operaton.equals("||")){
+            String exp1 = visit(ctx.expression(0));
+            if(type.equals("boolean")){
+                String exp2 = visit(ctx.expression(1));
+                if(type.equals("boolean")){
+                    //2 expresiones booleanas
+                    type = "boolean";
+                    if(operaton.equals("&&")){
+                        if(exp1.equals(exp2) && exp1.equals("false")){
+                            return "false";
+                        }
+                        else if(exp1.equals(exp2) && exp1.equals("true")){
+                            return "true";
+                        }
+                        else{
+                            //valores diferentes
+                            return "false";
+                        }
+
+                    }
+                    else{
+                        if(exp1.equals(exp2) && exp1.equals("false")){
+                            return "false";
+                        }
+                        else if(exp1.equals(exp2) && exp1.equals("true")){
+                            return "true";
+                        }
+                        else{
+                            //valores diferentes
+                            return "true";
+                        }
+
+                    }
+                }
+                else{
+                    //Expression 2 no es booleana
+                }
+            }
+            else{
+                //Expression 1 no es booleana
+            }
+
+
+        }
+        else{
+            //Esto mostrara error porque la operacion que esta enmedio no es
+            //una condicional
+        }
+        type = "boolean";
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
