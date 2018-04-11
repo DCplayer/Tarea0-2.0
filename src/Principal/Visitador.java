@@ -384,7 +384,38 @@ public class Visitador extends decafBaseVisitor<String> {
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitEqOpExp(decafParser.EqOpExpContext ctx) { return visitChildren(ctx); }
+    @Override public String visitEqOpExp(decafParser.EqOpExpContext ctx) {
+        String operation = ctx.op.getText();
+        String exp1 = visit(ctx.expression(0));
+        String exp2 = visit(ctx.expression(1));
+        if(operation.equals("==")){
+            type = "boolean";
+            if(exp1.equals(exp2)){
+                return "true";
+            }
+            else{
+                return "false";
+            }
+
+
+        }
+        else if (operation.equals("!=")){
+            type = "boolean";
+            if(exp1.equals(exp2)){
+                return "false";
+            }
+            else{
+                return "true";
+            }
+        }
+        else{
+            //Operacion no es ==  o !=
+        }
+
+
+
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
