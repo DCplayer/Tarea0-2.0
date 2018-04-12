@@ -351,8 +351,29 @@ public class Visitador extends decafBaseVisitor<String> {
      */
     @Override public String visitDashExp(decafParser.DashExpContext ctx) {
         String value = ctx.expression().getText();
+        if(type.equals("int")){
+            String posibleDash = value.substring(0,1);
+            if(posibleDash.equals("-")){
+                type = "int";
+                String rialValue = value.substring(1,value.length());
+                return rialValue;
 
-        return visitChildren(ctx);
+            }
+            else{
+                type = "int";
+                return "-" + value;
+
+            }
+
+        }
+        else{
+            //valor no es de tipo int, no se puede hacer dash;
+            type = "null";
+            return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                    ". " + ctx.expression().getText() + " no es una expression de tipo 'int'.\n";
+
+        }
+
     }
     /**
      * {@inheritDoc}
@@ -360,7 +381,9 @@ public class Visitador extends decafBaseVisitor<String> {
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitLiteralExp(decafParser.LiteralExpContext ctx) { return visitChildren(ctx); }
+    @Override public String visitLiteralExp(decafParser.LiteralExpContext ctx) {
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
@@ -432,14 +455,18 @@ public class Visitador extends decafBaseVisitor<String> {
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitLocationExp(decafParser.LocationExpContext ctx) { return visitChildren(ctx); }
+    @Override public String visitLocationExp(decafParser.LocationExpContext ctx) {
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitMethodExp(decafParser.MethodExpContext ctx) { return visitChildren(ctx); }
+    @Override public String visitMethodExp(decafParser.MethodExpContext ctx) {
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
@@ -524,14 +551,125 @@ public class Visitador extends decafBaseVisitor<String> {
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitFirstArithOpExp(decafParser.FirstArithOpExpContext ctx) { return visitChildren(ctx); }
+    @Override public String visitFirstArithOpExp(decafParser.FirstArithOpExpContext ctx) {
+        String opearation = ctx.op.getText();
+        if(opearation.equals("*") ||opearation.equals("/") ||opearation.equals("%") ){
+            String exp1 = visit(ctx.expression(0));
+            if(type.equals("int")){
+                String exp2 = visit(ctx.expression(1));
+                if(type.equals("int")){
+                    type = "int";
+                    if(opearation.equals("*")){
+                        int value = Integer.parseInt(exp1) * Integer.parseInt(exp2);
+                        return "" + value;
+
+                    }
+                    else if(opearation.equals("/")){
+                        int value = Integer.parseInt(exp1) / Integer.parseInt(exp2);
+                        return "" + value;
+
+                    }
+                    else{
+                        int value = Integer.parseInt(exp1) % Integer.parseInt(exp2);
+                        return ""  + value;
+
+                    }
+                }
+                else{
+                    //Exp2 no es de tipo int
+                    type = "null";
+                    return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()
+                            + ". Second expression type = "+ type +", expected 'int'\n";
+                }
+            }
+            else{
+                //exp1 no es de tipo int
+                type = "null";
+                return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()
+                        + ". First expression type = "+ type +", expected 'int'\n";
+            }
+
+        }
+        else{
+            //No es ninguno de los operadores esperados
+            type = "null";
+            return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()
+                    + ". Expected '*', '/', '%' operators, got "+ opearation +" opearator\n";
+        }
+
+    }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitSecondArithOpExp(decafParser.SecondArithOpExpContext ctx) { return visitChildren(ctx); }
+    @Override public String visitSecondArithOpExp(decafParser.SecondArithOpExpContext ctx) {
+        String operation = ctx.op.getText();
+        if(operation.equals("+") || operation.equals("-")){
+            String exp1 = visit(ctx.expression(0));
+            if(type.equals("int")){
+                String exp2 = visit(ctx.expression(1));
+                if(type.equals("int")){
+                    if(operation.equals("+")){
+                        type = "int";
+                        int resultado = Integer.parseInt(exp1) + Integer.parseInt(exp2);
+                        return "" + resultado;
+
+                    }
+                    else{
+                        type = "int";
+                        int resultado = Integer.parseInt(exp1) - Integer.parseInt(exp2);
+                        return "" + resultado;
+
+                    }
+                }
+                else{
+                    //exp2 no es de tipo int
+                    type = "null";
+                    return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()
+                            + ". Expected 'int', second expression type =. "+ type +"\n";
+
+                }
+            }
+            else if (type.equals("char")){
+                String exp2 = visit(ctx.expression(1));
+                if(type.equals("char")){
+                    if(operation.equals("+")){
+                        type = "char";
+                        return exp1 + exp2;
+                    }
+                    else{
+                        //No se puede hacer resta de char :D solo concatenacion
+                        type = "null";
+                        return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()
+                                + ". Non exisitent substraction of 'char'\n";
+                    }
+
+                }
+                else{
+                    //Exp 2 no es de tipo char cuando exp 1 si es char
+                    type = "null";
+                    return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()
+                            + ". Expected 'char', first expression type = 'char', second expression type =. "+ type +"\n";
+                }
+
+            }
+            else{
+                //No se puede hacer la operacion, exp1 no es int ni char
+                type = "null";
+                return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()
+                        + ". Expected 'int' or 'char', first expression type = "+ type +"\n";
+            }
+        }
+        else{
+            //Error, el signo ingresado no es ninguno de los esperados
+            type = "null";
+            return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()
+                    + ". Expected '+' or '-', recieved "+ operation+ "\n";
+        }
+
+    }
     /**
      * {@inheritDoc}
      *
