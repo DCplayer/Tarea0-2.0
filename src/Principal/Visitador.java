@@ -150,7 +150,10 @@ public class Visitador extends decafBaseVisitor<String> {
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitParamType(decafParser.ParamTypeContext ctx) { return visitChildren(ctx); }
+    @Override public String visitParamType(decafParser.ParamTypeContext ctx) {
+
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
@@ -277,12 +280,78 @@ public class Visitador extends decafBaseVisitor<String> {
      * {@link #visitChildren} on {@code ctx}.</p>
      */
     @Override public String visitRelOpExp(decafParser.RelOpExpContext ctx) {
+<<<<<<< HEAD
         type = "boolean";
         return visitChildren(ctx);
     }
 
+=======
+        String operation = ctx.op.getText();
+        String exp1 =  visit(ctx.expression(0));
+        if(type.equals("int")){
+            String exp2 = visit(ctx.expression(1));
+            if(type.equals("int")){
+                type = "boolean";
+                if(operation.equals("<")){
+                    if(Integer.parseInt(exp1) < Integer.parseInt(exp2)){
+                        return "true";
+                    }
+                    else{
+                        return "false";
+                    }
+
+                }
+                else if(operation.equals(">")){
+                    if(Integer.parseInt(exp1) > Integer.parseInt(exp2)){
+                        return "true";
+                    }
+                    else{
+                        return "false";
+                    }
+
+                }
+                else if(operation.equals("<=")){
+                    if(Integer.parseInt(exp1) <= Integer.parseInt(exp2)){
+                        return "true";
+                    }
+                    else{
+                        return "false";
+                    }
+
+                }
+                else if(operation.equals(">=")){
+                    if(Integer.parseInt(exp1) >= Integer.parseInt(exp2)){
+                        return "true";
+                    }
+                    else{
+                        return "false";
+                    }
+                }
+                else{
+                    //No es ningun signo esperado
+                    return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                            ". " + ctx.expression(1).getText()+ " no es una expression de tipo 'int'.\n";
+
+                }
+            }
+            else{
+                //La segunda expresion no es tipo int
+                type = "null";
+                return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                        ". " + ctx.expression(1).getText()+ " no es una expression de tipo 'int'.\n";
+            }
+        }
+        else{
+            //Error porque no es tipo int
+            type = "null";
+            return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                    ". " + ctx.expression(0).getText()+ " no es una expression de tipo 'int'.\n";
+        }
+    }
+>>>>>>> origin/master
     /**
-     * {@inheritDoc}
+     * {@inheritDoc
+     * }
      *
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
@@ -302,8 +371,68 @@ public class Visitador extends decafBaseVisitor<String> {
      * {@link #visitChildren} on {@code ctx}.</p>
      */
     @Override public String visitCondOpExp(decafParser.CondOpExpContext ctx) {
+<<<<<<< HEAD
         type = "boolean";
         return visitChildren(ctx);
+=======
+        String operaton = ctx.op.getText();
+        if(operaton.equals("&&") || operaton.equals("||")){
+            String exp1 = visit(ctx.expression(0));
+            if(type.equals("boolean")){
+                String exp2 = visit(ctx.expression(1));
+                if(type.equals("boolean")){
+                    //2 expresiones booleanas
+                    type = "boolean";
+                    if(operaton.equals("&&")){
+                        if(exp1.equals(exp2) && exp1.equals("false")){
+                            return "false";
+                        }
+                        else if(exp1.equals(exp2) && exp1.equals("true")){
+                            return "true";
+                        }
+                        else{
+                            //valores diferentes
+                            return "false";
+                        }
+
+                    }
+                    else{
+                        if(exp1.equals(exp2) && exp1.equals("false")){
+                            return "false";
+                        }
+                        else if(exp1.equals(exp2) && exp1.equals("true")){
+                            return "true";
+                        }
+                        else{
+                            //valores diferentes
+                            return "true";
+                        }
+
+                    }
+                }
+                else{
+                    //Expression 2 no es booleana
+                    type = "null";
+                    return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                            ". " + ctx.expression(1).getText()+ " no es una expression booleana.\n";
+                }
+            }
+            else{
+                //Expression 1 no es booleana
+                type = "null";
+                return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                        ". " + ctx.expression(0).getText()+ " no es una expression booleana.\n";
+            }
+
+
+        }
+        else{
+            //Esto mostrara error porque la operacion que esta enmedio no es
+            //una condicional
+            type = "null";
+            return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+ ". Se esperaba signo '&&' o '||'.\n";
+        }
+>>>>>>> origin/master
     }
     /**
      * {@inheritDoc}
@@ -336,8 +465,39 @@ public class Visitador extends decafBaseVisitor<String> {
      * {@link #visitChildren} on {@code ctx}.</p>
      */
     @Override public String visitEqOpExp(decafParser.EqOpExpContext ctx) {
+<<<<<<< HEAD
         type = "boolean";
         return visitChildren(ctx);
+=======
+        String operation = ctx.op.getText();
+        String exp1 = visit(ctx.expression(0));
+        String exp2 = visit(ctx.expression(1));
+        if(operation.equals("==")){
+            type = "boolean";
+            if(exp1.equals(exp2)){
+                return "true";
+            }
+            else{
+                return "false";
+            }
+
+
+        }
+        else if (operation.equals("!=")){
+            type = "boolean";
+            if(exp1.equals(exp2)){
+                return "false";
+            }
+            else{
+                return "true";
+            }
+        }
+        else{
+            type = "null";
+            return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+ ". Se esperaba signo '==' o '!='.\n";
+        }
+
+>>>>>>> origin/master
     }
     /**
      * {@inheritDoc}
@@ -422,11 +582,13 @@ public class Visitador extends decafBaseVisitor<String> {
             }
             if(!firmaExistente){
                 //Mostrar error porque del metodo, no existe con esa combinacion de parametros
-                return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+ ". Firma no existente.\n";
+                type = "null";
+                return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+ ". "+ ctx.ID().getText() +": Firma no existente.\n";
             }
         }
         else{
             //Mostrar error porque el metodo no existe
+            type = "null";
             return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+ ". \""+ctx.ID().getText()+"\" , Method unexistent.\n";
 
         }
