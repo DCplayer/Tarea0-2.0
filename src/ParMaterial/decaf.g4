@@ -1,7 +1,7 @@
 grammar decaf;
 
 ID: LETTER (LETTER|DIGIT)*;
-NUM: DIGIT DIGIT*;
+NUM: ('-')? DIGIT DIGIT*;
 CHAR: LETTER;
 fragment DIGIT: [0-9];
 fragment LETTER: ('a'..'z')|('A'..'Z');

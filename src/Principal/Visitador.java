@@ -280,12 +280,6 @@ public class Visitador extends decafBaseVisitor<String> {
      * {@link #visitChildren} on {@code ctx}.</p>
      */
     @Override public String visitRelOpExp(decafParser.RelOpExpContext ctx) {
-<<<<<<< HEAD
-        type = "boolean";
-        return visitChildren(ctx);
-    }
-
-=======
         String operation = ctx.op.getText();
         String exp1 =  visit(ctx.expression(0));
         if(type.equals("int")){
@@ -348,7 +342,6 @@ public class Visitador extends decafBaseVisitor<String> {
                     ". " + ctx.expression(0).getText()+ " no es una expression de tipo 'int'.\n";
         }
     }
->>>>>>> origin/master
     /**
      * {@inheritDoc
      * }
@@ -356,7 +349,11 @@ public class Visitador extends decafBaseVisitor<String> {
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitDashExp(decafParser.DashExpContext ctx) { return visitChildren(ctx); }
+    @Override public String visitDashExp(decafParser.DashExpContext ctx) {
+        String value = ctx.expression().getText();
+
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
@@ -371,10 +368,6 @@ public class Visitador extends decafBaseVisitor<String> {
      * {@link #visitChildren} on {@code ctx}.</p>
      */
     @Override public String visitCondOpExp(decafParser.CondOpExpContext ctx) {
-<<<<<<< HEAD
-        type = "boolean";
-        return visitChildren(ctx);
-=======
         String operaton = ctx.op.getText();
         if(operaton.equals("&&") || operaton.equals("||")){
             String exp1 = visit(ctx.expression(0));
@@ -432,7 +425,6 @@ public class Visitador extends decafBaseVisitor<String> {
             type = "null";
             return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+ ". Se esperaba signo '&&' o '||'.\n";
         }
->>>>>>> origin/master
     }
     /**
      * {@inheritDoc}
@@ -465,10 +457,6 @@ public class Visitador extends decafBaseVisitor<String> {
      * {@link #visitChildren} on {@code ctx}.</p>
      */
     @Override public String visitEqOpExp(decafParser.EqOpExpContext ctx) {
-<<<<<<< HEAD
-        type = "boolean";
-        return visitChildren(ctx);
-=======
         String operation = ctx.op.getText();
         String exp1 = visit(ctx.expression(0));
         String exp2 = visit(ctx.expression(1));
@@ -497,7 +485,6 @@ public class Visitador extends decafBaseVisitor<String> {
             return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+ ". Se esperaba signo '==' o '!='.\n";
         }
 
->>>>>>> origin/master
     }
     /**
      * {@inheritDoc}
