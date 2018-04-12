@@ -279,7 +279,69 @@ public class Visitador extends decafBaseVisitor<String> {
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitRelOpExp(decafParser.RelOpExpContext ctx) { return visitChildren(ctx); }
+    @Override public String visitRelOpExp(decafParser.RelOpExpContext ctx) {
+        String operation = ctx.op.getText();
+        String exp1 =  visit(ctx.expression(0));
+        if(type.equals("int")){
+            String exp2 = visit(ctx.expression(1));
+            if(type.equals("int")){
+                type = "boolean";
+                if(operation.equals("<")){
+                    if(Integer.parseInt(exp1) < Integer.parseInt(exp2)){
+                        return "true";
+                    }
+                    else{
+                        return "false";
+                    }
+
+                }
+                else if(operation.equals(">")){
+                    if(Integer.parseInt(exp1) > Integer.parseInt(exp2)){
+                        return "true";
+                    }
+                    else{
+                        return "false";
+                    }
+
+                }
+                else if(operation.equals("<=")){
+                    if(Integer.parseInt(exp1) <= Integer.parseInt(exp2)){
+                        return "true";
+                    }
+                    else{
+                        return "false";
+                    }
+
+                }
+                else if(operation.equals(">=")){
+                    if(Integer.parseInt(exp1) >= Integer.parseInt(exp2)){
+                        return "true";
+                    }
+                    else{
+                        return "false";
+                    }
+                }
+                else{
+                    //No es ningun signo esperado
+                    return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                            ". " + ctx.expression(1).getText()+ " no es una expression de tipo 'int'.\n";
+
+                }
+            }
+            else{
+                //La segunda expresion no es tipo int
+                type = "null";
+                return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                        ". " + ctx.expression(1).getText()+ " no es una expression de tipo 'int'.\n";
+            }
+        }
+        else{
+            //Error porque no es tipo int
+            type = "null";
+            return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                    ". " + ctx.expression(0).getText()+ " no es una expression de tipo 'int'.\n";
+        }
+    }
     /**
      * {@inheritDoc
      * }
@@ -339,10 +401,16 @@ public class Visitador extends decafBaseVisitor<String> {
                 }
                 else{
                     //Expression 2 no es booleana
+                    type = "null";
+                    return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                            ". " + ctx.expression(1).getText()+ " no es una expression booleana.\n";
                 }
             }
             else{
                 //Expression 1 no es booleana
+                type = "null";
+                return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                        ". " + ctx.expression(0).getText()+ " no es una expression booleana.\n";
             }
 
 
@@ -350,9 +418,9 @@ public class Visitador extends decafBaseVisitor<String> {
         else{
             //Esto mostrara error porque la operacion que esta enmedio no es
             //una condicional
+            type = "null";
+            return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+ ". Se esperaba signo '&&' o '||'.\n";
         }
-        type = "boolean";
-        return visitChildren(ctx);
     }
     /**
      * {@inheritDoc}
@@ -409,12 +477,10 @@ public class Visitador extends decafBaseVisitor<String> {
             }
         }
         else{
-            //Operacion no es ==  o !=
+            type = "null";
+            return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+ ". Se esperaba signo '==' o '!='.\n";
         }
 
-
-
-        return visitChildren(ctx);
     }
     /**
      * {@inheritDoc}
@@ -477,11 +543,13 @@ public class Visitador extends decafBaseVisitor<String> {
             }
             if(!firmaExistente){
                 //Mostrar error porque del metodo, no existe con esa combinacion de parametros
-                return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+ ". Firma no existente.\n";
+                type = "null";
+                return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+ ". "+ ctx.ID().getText() +": Firma no existente.\n";
             }
         }
         else{
             //Mostrar error porque el metodo no existe
+            type = "null";
             return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+ ". \""+ctx.ID().getText()+"\" , Method unexistent.\n";
 
         }
