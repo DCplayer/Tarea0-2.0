@@ -276,7 +276,11 @@ public class Visitador extends decafBaseVisitor<String> {
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitRelOpExp(decafParser.RelOpExpContext ctx) { return visitChildren(ctx); }
+    @Override public String visitRelOpExp(decafParser.RelOpExpContext ctx) {
+        type = "boolean";
+        return visitChildren(ctx);
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -297,7 +301,10 @@ public class Visitador extends decafBaseVisitor<String> {
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitCondOpExp(decafParser.CondOpExpContext ctx) { return visitChildren(ctx); }
+    @Override public String visitCondOpExp(decafParser.CondOpExpContext ctx) {
+        type = "boolean";
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
@@ -328,7 +335,10 @@ public class Visitador extends decafBaseVisitor<String> {
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitEqOpExp(decafParser.EqOpExpContext ctx) { return visitChildren(ctx); }
+    @Override public String visitEqOpExp(decafParser.EqOpExpContext ctx) {
+        type = "boolean";
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
@@ -336,8 +346,30 @@ public class Visitador extends decafBaseVisitor<String> {
      * {@link #visitChildren} on {@code ctx}.</p>
      */
     @Override public String visitNotExp(decafParser.NotExpContext ctx) {
-        //return value de expresion? tiene que ser booleano siempre, los
-        return visitChildren(ctx);
+        String value = visit(ctx.expression());
+        if(type.equals("boolean")){
+            if(value.equals("false")){
+                type = "boolean";
+                return "true";
+
+            }
+            else if(value.equals("true")){
+                type = "boolean";
+                return "false";
+
+            }
+            else{
+                //Error porque no tiene ninguno de los valores booleanos esperados
+                type = "null";
+                return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+ ". Valor booleano esperado.\n";
+            }
+        }
+        else{
+            //Mostrar error porque lo que se quiere negar no es un booleano
+            type = "null";
+            return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+ ". Valor booleano esperado.\n";
+        }
+
     }
     /**
      * {@inheritDoc}
@@ -365,7 +397,7 @@ public class Visitador extends decafBaseVisitor<String> {
         SyTable ambitoActual = (SyTable) verificadorAmbitos.peek();
 
         boolean existente = false;
-        Method temporal = new Method(null, null, null, null, null);
+        Method temporal = new Method(null, null, null, null, null, null);
         for (Tuplas t: ambitoActual.getTablaDeSimbolos()){
             if(t.getNombre().equals(identificador)){
                 existente = true;
@@ -398,6 +430,9 @@ public class Visitador extends decafBaseVisitor<String> {
             return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+ ". \""+ctx.ID().getText()+"\" , Method unexistent.\n";
 
         }
+        /**
+         * Tipo en Type = tipo del metodo.**/
+        type = temporal.getType();
         return visitChildren(ctx);
     }
 
