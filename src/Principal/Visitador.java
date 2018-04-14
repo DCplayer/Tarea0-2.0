@@ -265,7 +265,11 @@ public class Visitador extends decafBaseVisitor<String> {
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitExpressionLoc(decafParser.ExpressionLocContext ctx) { return visitChildren(ctx); }
+    @Override public String visitExpressionLoc(decafParser.ExpressionLocContext ctx) {
+        //Buscar si ID es un elemento de la tabla de symbolos actual o de cualquier tabla existente
+        // y ver si ese ID existe en la tabla de simbolos. Ahora si se tiene ID[expression]
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
