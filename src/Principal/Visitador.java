@@ -198,21 +198,70 @@ public class Visitador extends decafBaseVisitor<String> {
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitIfDeclStm(decafParser.IfDeclStmContext ctx) { return visitChildren(ctx); }
+    @Override public String visitIfDeclStm(decafParser.IfDeclStmContext ctx) {
+        String stm = visit(ctx.expression());
+        if(type.equals("boolean")){
+            if(stm.equals("true")){
+                visit(ctx.block());
+                type = "void";
+            }
+        }
+        else{
+            //Error, el tipo de expression no es booleano
+            type = "null";
+            return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                    ". " + ctx.expression().getText()+ " no es una expression de tipo 'boolean'.\n";
+        }
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitIfElseDeclStm(decafParser.IfElseDeclStmContext ctx) { return visitChildren(ctx); }
+    @Override public String visitIfElseDeclStm(decafParser.IfElseDeclStmContext ctx) {
+        String stm = visit(ctx.expression());
+        if(type.equals("boolean")){
+            if(stm.equals("true")){
+                visit(ctx.block(0));
+                type = "void";
+            }
+            else{
+                visit(ctx.block(1));
+                type = "void";
+            }
+        }
+        else{
+            //Error, el tipo de expression no es booleano
+            type = "null";
+            return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                    ". " + ctx.expression().getText()+ " no es una expression de tipo 'boolean'.\n";
+        }
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitWhileDeclStm(decafParser.WhileDeclStmContext ctx) { return visitChildren(ctx); }
+    @Override public String visitWhileDeclStm(decafParser.WhileDeclStmContext ctx) {
+        String stm = visit(ctx.expression());
+        if(type.equals("boolean")){
+            while(stm.equals("true")){
+                visit(ctx.block());
+                type = "void";
+            }
+        }
+        else{
+            //Error, el tipo de expression no es booleano
+            type = "null";
+            return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                    ". " + ctx.expression().getText()+ " no es una expression de tipo 'boolean'.\n";
+        }
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
@@ -226,14 +275,18 @@ public class Visitador extends decafBaseVisitor<String> {
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitReturnTypeStm(decafParser.ReturnTypeStmContext ctx) { return visitChildren(ctx); }
+    @Override public String visitReturnTypeStm(decafParser.ReturnTypeStmContext ctx) {
+        String stm = visit(ctx.expression());
+        return stm;
+    }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitCallMethodStm(decafParser.CallMethodStmContext ctx) { return visitChildren(ctx); }
+    @Override public String visitCallMethodStm(decafParser.CallMethodStmContext ctx) {return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
@@ -247,7 +300,14 @@ public class Visitador extends decafBaseVisitor<String> {
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitAssignStm(decafParser.AssignStmContext ctx) { return visitChildren(ctx); }
+    @Override public String visitAssignStm(decafParser.AssignStmContext ctx) {
+        //Identificar quienes son los dos involucrados, en terminos de ID
+        //Luego ver si, tienen el mismo tipo de dato
+        //Realizar la asignacion
+
+
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
@@ -749,45 +809,47 @@ public class Visitador extends decafBaseVisitor<String> {
         String identificador = ctx.ID().getText();
         SyTable ambitoActual = verificadorAmbitos.peek();
 
-        boolean existente = false;
-        Method temporal = new Method(null, null, null, null, null, null);
-        for (Tuplas t: ambitoActual.getTablaDeSimbolos()){
-            if(t.getNombre().equals(identificador)){
-                existente = true;
-                temporal = (Method) t.getElemento();
-
-            }
-        }
-        if(existente){
-            //Si existe el metodo, crear una lista de strings con le tipo de datos que es cada uno
-            //Verificar si ese tipo de datos es parte del signature del metodo
-            List<decafParser.ArgContext> argumentos = ctx.arg();
-            for(decafParser.ArgContext a: argumentos){
-                String value = visit(a);
-                argSignature.add(value);
-                argType.add(type);
-            }
-            boolean firmaExistente = false;
-            for(ArrayList<String> ar: temporal.getTypeValue()){
-                if(ar.equals(argType)){
-                    firmaExistente = true;
+        boolean existente = revisarExistencia(identificador);
+        if(objeto instanceof Method){
+            Method temporal = (Method) objeto;
+            if(existente){
+                //Si existe el metodo, crear una lista de strings con le tipo de datos que es cada uno
+                //Verificar si ese tipo de datos es parte del signature del metodo
+                List<decafParser.ArgContext> argumentos = ctx.arg();
+                for(decafParser.ArgContext a: argumentos){
+                    String value = visit(a);
+                    argSignature.add(value);
+                    argType.add(type);
+                }
+                boolean firmaExistente = false;
+                for(ArrayList<String> ar: temporal.getTypeValue()){
+                    if(ar.equals(argType)){
+                        firmaExistente = true;
+                        type = temporal.getType();
+                    }
+                }
+                if(!firmaExistente){
+                    //Mostrar error porque del metodo, no existe con esa combinacion de parametros
+                    type = "null";
+                    return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+ ". "+ ctx.ID().getText() +": Firma no existente.\n";
                 }
             }
-            if(!firmaExistente){
-                //Mostrar error porque del metodo, no existe con esa combinacion de parametros
+            else{
+                //Mostrar error porque el metodo no existe
                 type = "null";
-                return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+ ". "+ ctx.ID().getText() +": Firma no existente.\n";
+                return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+ ". \""+ctx.ID().getText()+"\" , Method unexistent.\n";
             }
         }
         else{
-            //Mostrar error porque el metodo no existe
+            //Error, se esperaba un metodo
             type = "null";
-            return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+ ". \""+ctx.ID().getText()+"\" , Method unexistent.\n";
-
+            return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+ ". "+ ctx.ID().getText() +": Method expected.\n";
         }
+
+
         /**
          * Tipo en Type = tipo del metodo.**/
-        type = temporal.getType();
+
         return visitChildren(ctx);
     }
 

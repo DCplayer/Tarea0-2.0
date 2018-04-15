@@ -42,8 +42,8 @@ parameterType:
 block:
             '{' varDeclaration* statement* '}'          # blockDecl;
 statement:
-            'if' '(' expression* ')' block              # ifDeclStm
-           |'if' '(' expression* ')' block 'else' block # ifElseDeclStm
+            'if' '(' expression ')' block              # ifDeclStm
+           |'if' '(' expression ')' block 'else' block # ifElseDeclStm
            |'while' '(' expression')' block             # whileDeclStm
            |'return' ';'                                # returnStm
            |'return' expression';'                      # returnTypeStm
