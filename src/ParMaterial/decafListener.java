@@ -416,29 +416,53 @@ public interface decafListener extends ParseTreeListener {
 	 */
 	void exitExpressionStm(decafParser.ExpressionStmContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code expressionLoc}
+	 * Enter a parse tree produced by the {@code simpleLoc}
 	 * labeled alternative in {@link decafParser#location}.
 	 * @param ctx the parse tree
 	 */
-	void enterExpressionLoc(decafParser.ExpressionLocContext ctx);
+	void enterSimpleLoc(decafParser.SimpleLocContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code expressionLoc}
+	 * Exit a parse tree produced by the {@code simpleLoc}
 	 * labeled alternative in {@link decafParser#location}.
 	 * @param ctx the parse tree
 	 */
-	void exitExpressionLoc(decafParser.ExpressionLocContext ctx);
+	void exitSimpleLoc(decafParser.SimpleLocContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code expressionLocLoc}
+	 * Enter a parse tree produced by the {@code listLoc}
 	 * labeled alternative in {@link decafParser#location}.
 	 * @param ctx the parse tree
 	 */
-	void enterExpressionLocLoc(decafParser.ExpressionLocLocContext ctx);
+	void enterListLoc(decafParser.ListLocContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code expressionLocLoc}
+	 * Exit a parse tree produced by the {@code listLoc}
 	 * labeled alternative in {@link decafParser#location}.
 	 * @param ctx the parse tree
 	 */
-	void exitExpressionLocLoc(decafParser.ExpressionLocLocContext ctx);
+	void exitListLoc(decafParser.ListLocContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code simpleLocExpr}
+	 * labeled alternative in {@link decafParser#location}.
+	 * @param ctx the parse tree
+	 */
+	void enterSimpleLocExpr(decafParser.SimpleLocExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code simpleLocExpr}
+	 * labeled alternative in {@link decafParser#location}.
+	 * @param ctx the parse tree
+	 */
+	void exitSimpleLocExpr(decafParser.SimpleLocExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code listLocExpr}
+	 * labeled alternative in {@link decafParser#location}.
+	 * @param ctx the parse tree
+	 */
+	void enterListLocExpr(decafParser.ListLocExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code listLocExpr}
+	 * labeled alternative in {@link decafParser#location}.
+	 * @param ctx the parse tree
+	 */
+	void exitListLocExpr(decafParser.ListLocExprContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code relOpExp}
 	 * labeled alternative in {@link decafParser#expression}.

@@ -249,19 +249,33 @@ public interface decafVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExpressionStm(decafParser.ExpressionStmContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code expressionLoc}
+	 * Visit a parse tree produced by the {@code simpleLoc}
 	 * labeled alternative in {@link decafParser#location}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExpressionLoc(decafParser.ExpressionLocContext ctx);
+	T visitSimpleLoc(decafParser.SimpleLocContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code expressionLocLoc}
+	 * Visit a parse tree produced by the {@code listLoc}
 	 * labeled alternative in {@link decafParser#location}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExpressionLocLoc(decafParser.ExpressionLocLocContext ctx);
+	T visitListLoc(decafParser.ListLocContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code simpleLocExpr}
+	 * labeled alternative in {@link decafParser#location}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSimpleLocExpr(decafParser.SimpleLocExprContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code listLocExpr}
+	 * labeled alternative in {@link decafParser#location}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitListLocExpr(decafParser.ListLocExprContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code relOpExp}
 	 * labeled alternative in {@link decafParser#expression}.

@@ -53,8 +53,10 @@ statement:
            |';'                                         # endStm
            |expression ';'                              # expressionStm;
 location:
-            (ID | ID '[' expression']')                 # expressionLoc
-           |(ID | ID '[' expression ']') '.' location   # expressionLocLoc;
+            ID                                          #simpleLoc
+            |ID '[' expression']'                       #listLoc
+            |ID '.' location                            #simpleLocExpr
+            |ID '['expression']' '.' location           #listLocExpr;
 
 expression:
             location                                    # locationExp

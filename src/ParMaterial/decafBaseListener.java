@@ -424,25 +424,49 @@ public class decafBaseListener implements decafListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionLoc(decafParser.ExpressionLocContext ctx) { }
+	@Override public void enterSimpleLoc(decafParser.SimpleLocContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionLoc(decafParser.ExpressionLocContext ctx) { }
+	@Override public void exitSimpleLoc(decafParser.SimpleLocContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionLocLoc(decafParser.ExpressionLocLocContext ctx) { }
+	@Override public void enterListLoc(decafParser.ListLocContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionLocLoc(decafParser.ExpressionLocLocContext ctx) { }
+	@Override public void exitListLoc(decafParser.ListLocContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterSimpleLocExpr(decafParser.SimpleLocExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSimpleLocExpr(decafParser.SimpleLocExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterListLocExpr(decafParser.ListLocExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitListLocExpr(decafParser.ListLocExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

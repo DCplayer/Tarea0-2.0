@@ -2,20 +2,23 @@ package Principal;
 
 import ParMaterial.decafBaseVisitor;
 import ParMaterial.decafParser;
+import parser.Elemento;
 import parser.Method;
 import parser.SyTable;
 import parser.Tuplas;
 
+import java.security.interfaces.ECKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
 public class Visitador extends decafBaseVisitor<String> {
-    private Stack verificadorAmbitos = new Stack();
+    private Stack<SyTable> verificadorAmbitos = new Stack();
     private ArrayList<String> argSignature = new ArrayList<>();
     private ArrayList<String> argType = new ArrayList<>();
     private String type;
     private String error = "";
+    private Elemento objeto;
 
     /**
      * {@inheritDoc}
@@ -265,9 +268,20 @@ public class Visitador extends decafBaseVisitor<String> {
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitExpressionLoc(decafParser.ExpressionLocContext ctx) {
-        //Buscar si ID es un elemento de la tabla de symbolos actual o de cualquier tabla existente
-        // y ver si ese ID existe en la tabla de simbolos. Ahora si se tiene ID[expression]
+
+    @Override public String visitSimpleLoc(decafParser.SimpleLocContext ctx) {
+        //Revisar si el ID existe y pertenece a un simbolo.
+        String id = ctx.ID().getText();
+        boolean revision = revisarExistencia(id);
+        if(revision){
+
+
+        }
+        else{
+            //Error, ID no existente
+            type = "null";
+
+        }
         return visitChildren(ctx);
     }
     /**
@@ -276,8 +290,58 @@ public class Visitador extends decafBaseVisitor<String> {
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitExpressionLocLoc(decafParser.ExpressionLocLocContext ctx) { return visitChildren(ctx); }
+    @Override public String visitSimpleLocExpr(decafParser.SimpleLocExprContext ctx) {
+        //Revisar si el ID existe y pertenece a un simbolo.
+        String id = ctx.ID().getText();
+        boolean revision = revisarExistencia(id);
+        if(revision){
+
+        }
+        else{
+            //Error, ID no existente
+
+        }
+        return visitChildren(ctx);
+    }
     /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     */
+    @Override public String visitListLocExpr(decafParser.ListLocExprContext ctx) {
+        //Revisar si el ID existe y pertenece a un simbolo.
+        String id = ctx.ID().getText();
+        boolean revision = revisarExistencia(id);
+        if(revision){
+
+        }
+        else{
+            //Error, ID no existente
+
+        }
+        return visitChildren(ctx);
+    }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     */
+    @Override public String visitListLoc(decafParser.ListLocContext ctx) {
+        //Revisar si el ID existe y pertenece a un simbolo.
+        String id = ctx.ID().getText();
+        boolean revision = revisarExistencia(id);
+        if(revision){
+
+        }
+        else{
+            //Error, ID no existente
+
+        }
+        return visitChildren(ctx);
+    }
+  /**
      * {@inheritDoc}
      *
      * <p>The default implementation returns the result of calling
@@ -683,7 +747,7 @@ public class Visitador extends decafBaseVisitor<String> {
     @Override public String visitMethodCallDecl(decafParser.MethodCallDeclContext ctx) {
         //Chequear primero que existe el metodo
         String identificador = ctx.ID().getText();
-        SyTable ambitoActual = (SyTable) verificadorAmbitos.peek();
+        SyTable ambitoActual = verificadorAmbitos.peek();
 
         boolean existente = false;
         Method temporal = new Method(null, null, null, null, null, null);
@@ -781,6 +845,20 @@ public class Visitador extends decafBaseVisitor<String> {
         type = "boolean";
         return "false";
 
+    }
+
+    public boolean revisarExistencia (String id){
+        //verificar que el metodo, lista, struct o symbolo exista en la tabla de simbolos
+        for(SyTable st: verificadorAmbitos){
+            for(Tuplas t: st.getTablaDeSimbolos()){
+                if(t.getNombre().equals(id)){
+                    objeto = t.getElemento();
+                    return true;
+                }
+
+            }
+        }
+        return  false;
     }
 
 
