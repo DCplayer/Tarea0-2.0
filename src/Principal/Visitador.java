@@ -2,10 +2,7 @@ package Principal;
 
 import ParMaterial.decafBaseVisitor;
 import ParMaterial.decafParser;
-import parser.Elemento;
-import parser.Method;
-import parser.SyTable;
-import parser.Tuplas;
+import parser.*;
 
 import java.security.interfaces.ECKey;
 import java.util.ArrayList;
@@ -19,6 +16,7 @@ public class Visitador extends decafBaseVisitor<String> {
     private String type;
     private String error = "";
     private Elemento objeto;
+    private String locationID;
 
     /**
      * {@inheritDoc}
@@ -305,6 +303,15 @@ public class Visitador extends decafBaseVisitor<String> {
         //Luego ver si, tienen el mismo tipo de dato
         //Realizar la asignacion
 
+        String returnValue = visit(ctx.location());
+        String locationType = type;
+
+
+        String returnExpression = visit(ctx.expression());
+        String expressionType = type;
+
+
+
 
         return visitChildren(ctx);
     }
@@ -334,15 +341,29 @@ public class Visitador extends decafBaseVisitor<String> {
         String id = ctx.ID().getText();
         boolean revision = revisarExistencia(id);
         if(revision){
-
+            if(objeto instanceof Symbol){
+                return id;
+            }
+            else if (objeto instanceof Method){
+                type = "null";
+                return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                        ". " + id + " Debe de ser una lista o un simbolo, no un metodo.\n";
+            }
+            else{
+                type = "null";
+                return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                        ". " + id + " no es un symbolo o una lista.\n";
+            }
 
         }
         else{
             //Error, ID no existente
             type = "null";
+            return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                    ". " + id + " no ha sido declarado.\n";
+
 
         }
-        return visitChildren(ctx);
     }
     /**
      * {@inheritDoc}
@@ -355,10 +376,27 @@ public class Visitador extends decafBaseVisitor<String> {
         String id = ctx.ID().getText();
         boolean revision = revisarExistencia(id);
         if(revision){
+            if(objeto instanceof Symbol){
+                String tipoSymbol = type;
+                Symbol temporal = (Symbol) objeto;
+                if(temporal.isStruct()){
+
+
+                }
+                else{
+                    //No es Struct, no puede obtener un ID.location
+                }
+            }
+            else{
+                //No es symbol, fijo es method o List
+            }
 
         }
         else{
             //Error, ID no existente
+            type = "null";
+            return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                    ". " + id + " no ha sido declarado.\n";
 
         }
         return visitChildren(ctx);
@@ -393,13 +431,51 @@ public class Visitador extends decafBaseVisitor<String> {
         String id = ctx.ID().getText();
         boolean revision = revisarExistencia(id);
         if(revision){
+            if(objeto instanceof List){
+                String tipoLista = type;
+                visit(ctx.expression());
+                if(type.equals("int")){
+                    //Obtener la instancia de Line
+                    Conjunto temporal = (Conjunto) objeto;
+                    try{
+                        int indice = Integer.parseInt(visit(ctx.expression()));
+                        String value = "" + temporal.getContenido().get(indice);
+                        type = tipoLista;
+                        return value;
+
+                    }catch (Exception e ){
+                        type = "null";
+                        return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                                ". " + ctx.ID().getText() + " IndexOutOfBounds, posee:  "+ temporal.getCantElementos()+
+                                " elementos, se pidio el elemento " + ctx.expression().getText()+ ".\n";
+
+                    }
+
+                }
+                else{
+                    //Expr no es de tipo int
+                    type = "null";
+                    return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                            ". " + ctx.expression().getText() + " no es de tipo 'int'.\n";
+                }
+
+            }
+            else{
+                //error, no es instancia de una lista
+                type = "null";
+                return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                        ". " + id + " No es una instancia de Lista.\n";
+            }
+
 
         }
         else{
             //Error, ID no existente
+            type = "null";
+            return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                    ". " + id + " no ha sido declarado.\n";
 
         }
-        return visitChildren(ctx);
     }
   /**
      * {@inheritDoc}
@@ -915,6 +991,8 @@ public class Visitador extends decafBaseVisitor<String> {
             for(Tuplas t: st.getTablaDeSimbolos()){
                 if(t.getNombre().equals(id)){
                     objeto = t.getElemento();
+                    type.equals(objeto.getType());
+
                     return true;
                 }
 

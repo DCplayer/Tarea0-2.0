@@ -65,7 +65,7 @@ expression:
            |expression op=('*'|'/'|'%') expression      # firstArithOpExp
            |expression op=('+'|'-') expression          # secondArithOpExp
            |expression op=('<'|'>'|'<='|'>=') expression# relOpExp
-           |expression op=('=='|'!=') expression        # eqOpExp
+           |expression op=('=='|'!=') expression        # eqOpExSymp
            |expression op=('&&'|'||') expression        # condOpExp
            |'-' expression                              # dashExp
            |'!' expression                              # notExp
