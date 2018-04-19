@@ -9,7 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-public class Visitador extends decafBaseVisitor<String> {
+public class
+Visitador extends decafBaseVisitor<String> {
     private Stack<SyTable> verificadorAmbitos = new Stack();
     private ArrayList<String> argSignature = new ArrayList<>();
     private ArrayList<String> argType = new ArrayList<>();
@@ -379,16 +380,30 @@ public class Visitador extends decafBaseVisitor<String> {
             if(objeto instanceof Symbol){
                 String tipoSymbol = type;
                 Symbol temporal = (Symbol) objeto;
+                boolean structurado = false;
                 if(temporal.isStruct()){
-
+                    String deepening = visit(ctx.location());
+                    structurado = true;
+                }
+                if(structurado && type.equals("null")){
+                    type = "null";
+                    return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                            ". " + ctx.getText() + " es de tipo 'null'.\n";
 
                 }
                 else{
                     //No es Struct, no puede obtener un ID.location
+                    type = "null";
+                    return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                            ". " + id + " no es un Struct, no puede obtenerse la " +
+                            "condicion de atributo por medio de '.' .\n";
                 }
             }
             else{
                 //No es symbol, fijo es method o List
+                type = "null";
+                return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                        ". " + id + " no es un Symbol, es una Lista o un Method :D.\n";
             }
 
         }
@@ -399,7 +414,6 @@ public class Visitador extends decafBaseVisitor<String> {
                     ". " + id + " no ha sido declarado.\n";
 
         }
-        return visitChildren(ctx);
     }
     /**
      * {@inheritDoc}
@@ -412,6 +426,19 @@ public class Visitador extends decafBaseVisitor<String> {
         String id = ctx.ID().getText();
         boolean revision = revisarExistencia(id);
         if(revision){
+            if(objeto instanceof Conjunto){
+                Conjunto lista = (Conjunto) objeto;
+                if(lista.isStruct()){
+                    //Si se puede desarrollar lo de location con punto
+                }
+                else{
+                    //Contenido de la lista no es struct, marcar error.
+                }
+
+            }
+            else{
+                //Error, no es una lista, la estructura esta mal
+            }
 
         }
         else{

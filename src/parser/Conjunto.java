@@ -9,10 +9,15 @@ public class Conjunto extends Elemento{
 
     private int cantElementos;
     private ArrayList<Object> contenido = new ArrayList<>();
+    private boolean isStruct;
+    private String tipoStruct;
 
-    public Conjunto(String name, String type, ArrayList<ArrayList<String>> signature, int cantElementos) {
+    public Conjunto(String name, String type, ArrayList<ArrayList<String>> signature, int cantElementos,
+                    boolean isStruct, String tipoStruct) {
         super(name, type, null);
         this.cantElementos = cantElementos;
+        this.isStruct = isStruct;
+        this.tipoStruct = tipoStruct;
 
     }
 
@@ -26,5 +31,13 @@ public class Conjunto extends Elemento{
 
     public ArrayList<Object> getContenido() {
         return contenido;
+    }
+
+    public boolean isStruct() {
+        return isStruct;
+    }
+
+    public String getTipoStruct() {
+        return tipoStruct;
     }
 }
