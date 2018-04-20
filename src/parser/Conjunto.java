@@ -40,4 +40,8 @@ public class Conjunto extends Elemento{
     public String getTipoStruct() {
         return tipoStruct;
     }
+
+    public void setTipoStruct(String tipoStruct) {
+        this.tipoStruct = tipoStruct;
+    }
 }

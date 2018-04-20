@@ -384,13 +384,11 @@ Visitador extends decafBaseVisitor<String> {
                 if(temporal.isStruct()){
                     String deepening = visit(ctx.location());
                     structurado = true;
+                    if(structurado && !(type.equals("null"))){
+                        return visitChildren(ctx);
+                    }
                 }
-                if(structurado && type.equals("null")){
-                    type = "null";
-                    return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
-                            ". " + ctx.getText() + " es de tipo 'null'.\n";
 
-                }
                 else{
                     //No es Struct, no puede obtener un ID.location
                     type = "null";
@@ -414,6 +412,7 @@ Visitador extends decafBaseVisitor<String> {
                     ". " + id + " no ha sido declarado.\n";
 
         }
+        return visitChildren(ctx);
     }
     /**
      * {@inheritDoc}
@@ -424,28 +423,58 @@ Visitador extends decafBaseVisitor<String> {
     @Override public String visitListLocExpr(decafParser.ListLocExprContext ctx) {
         //Revisar si el ID existe y pertenece a un simbolo.
         String id = ctx.ID().getText();
-        boolean revision = revisarExistencia(id);
-        if(revision){
-            if(objeto instanceof Conjunto){
-                Conjunto lista = (Conjunto) objeto;
-                if(lista.isStruct()){
-                    //Si se puede desarrollar lo de location con punto
+        String expresion = visit(ctx.expression());
+        if(type.equals("int")){
+            boolean revision = revisarExistencia(id);
+            if(revision){
+                if(objeto instanceof Conjunto){
+                    Conjunto lista = (Conjunto) objeto;
+                    if(lista.isStruct()){
+                        String atributo = visit(ctx.location());
+
+                        if(!type.equals("null")){
+                            return visitChildren(ctx);
+                        }
+                        else{
+                            type = "null";
+                            return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                                    ". " + ctx.location().getText() + " no existe o no pudo ser encontrado.\n";
+                        }
+
+                    }
+                    else{
+                        //Contenido de la lista no es struct, marcar error.
+                        type = "null";
+                        return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                                ". " + id + " no es una lista con Structs.\n";
+                    }
+
                 }
                 else{
-                    //Contenido de la lista no es struct, marcar error.
+                    //Error, no es una lista, la estructura esta mal
+                    type = "null";
+                    return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                            ". " + ctx.ID().getText()+ " no es una lista, no puede obtenerse el [ "
+                            + ctx.expression().getText()+"] dato.\n";
                 }
 
             }
             else{
-                //Error, no es una lista, la estructura esta mal
+                //Error, ID no existente
+                type = "null";
+                return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                        ". " + id + " no existe, no ha sido creado.\n";
+
             }
 
         }
         else{
-            //Error, ID no existente
+            //Expression no es de tipo int
+            type = "null";
+            return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                    ". " + ctx.expression().getText() + " no es de tipo int.\n";
 
         }
-        return visitChildren(ctx);
     }
     /**
      * {@inheritDoc}
