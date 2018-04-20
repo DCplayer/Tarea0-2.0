@@ -40,7 +40,7 @@ parameterType:
            |'char'                                      # charParam
            |'boolean'                                   # boolParam;
 block:
-            '{' varDeclaration* statement* '}'          # blockDecl;
+            '{' (varDeclaration| statement)* '}'          # blockDecl;
 statement:
             'if' '(' expression ')' block              # ifDeclStm
            |'if' '(' expression ')' block 'else' block # ifElseDeclStm

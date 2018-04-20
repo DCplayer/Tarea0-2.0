@@ -4,6 +4,7 @@ import javax.swing.JTree;
 
 import ParMaterial.decafLexer;
 import ParMaterial.decafParser;
+import Principal.Visitador;
 import javafx.scene.layout.Pane;
 import parser.*;
 import org.antlr.v4.runtime.*;
@@ -59,6 +60,9 @@ public class App {
                 System.out.println(arbolitoPro.toString());
                 PanelArbol.add(arbolitoPro);
                 System.out.println(tree.toStringTree(parser));
+
+                Visitador visitador = new Visitador();
+                visitador.visit(tree);
 
 
             }
