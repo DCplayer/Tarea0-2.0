@@ -2,6 +2,7 @@ package Principal;
 
 import ParMaterial.decafBaseVisitor;
 import ParMaterial.decafParser;
+import org.antlr.v4.runtime.tree.TerminalNode;
 import parser.*;
 
 import java.security.interfaces.ECKey;
@@ -165,35 +166,87 @@ Visitador extends decafBaseVisitor<String> {
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitParamListType(decafParser.ParamListTypeContext ctx) { return visitChildren(ctx); }
+    @Override public String visitParamListType(decafParser.ParamListTypeContext ctx) {
+        visit(ctx.parameterType());
+        String tipo = type;
+        String id = ctx.ID().getText();
+        boolean revisado = revisarExistencia(id);
+
+        if(revisado){
+            if(type.equals(tipo)){
+                
+
+            }
+            else{
+                //Error,
+            }
+        }
+        else{
+            //ERror ID no existe
+
+        }
+
+
+
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitIntParam(decafParser.IntParamContext ctx) { return visitChildren(ctx); }
+    @Override public String visitIntParam(decafParser.IntParamContext ctx) {
+        type = "int";
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitCharParam(decafParser.CharParamContext ctx) { return visitChildren(ctx); }
+    @Override public String visitCharParam(decafParser.CharParamContext ctx) {
+        type = "char";
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitBoolParam(decafParser.BoolParamContext ctx) { return visitChildren(ctx); }
+    @Override public String visitBoolParam(decafParser.BoolParamContext ctx) {
+        type = "boolean";
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitBlockDecl(decafParser.BlockDeclContext ctx) { return visitChildren(ctx); }
+    @Override public String visitBlockDecl(decafParser.BlockDeclContext ctx) {
+        //aqui se declara y destruye un nuevo ambito despues de hacer las visitas que tocan :D
+        //New Sytable, push Sytable
+
+        ArrayList<Tuplas> tuplas = new ArrayList<>();
+        SyTable ambitoActual = new SyTable(tuplas);
+        verificadorAmbitos.push(ambitoActual);
+
+        int numeroVar = ctx.varDeclaration().size();
+        int numeroStm = ctx.statement().size();
+
+        for(int i = 0; i < numeroVar; i++){
+            String uso = visit(ctx.varDeclaration(i));
+        }
+        for(int i = 0; i < numeroStm; i++){
+            String uso = visit(ctx.statement(i));
+        }
+        //Pop Sytable
+        verificadorAmbitos.pop();
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
@@ -215,7 +268,6 @@ Visitador extends decafBaseVisitor<String> {
             return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
                     ". " + ctx.expression().getText()+ " no es una expression de tipo 'boolean'.\n";
         }
-
     }
     /**
      * {@inheritDoc}
