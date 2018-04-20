@@ -7,6 +7,7 @@ import parser.*;
 import java.security.interfaces.ECKey;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Stack;
 
 public class
@@ -18,6 +19,8 @@ Visitador extends decafBaseVisitor<String> {
     private String error = "";
     private Elemento objeto;
     private String locationID;
+    private Elemento objetoAnterior = null;
+
 
     /**
      * {@inheritDoc}
@@ -200,10 +203,11 @@ Visitador extends decafBaseVisitor<String> {
     @Override public String visitIfDeclStm(decafParser.IfDeclStmContext ctx) {
         String stm = visit(ctx.expression());
         if(type.equals("boolean")){
+            String resultado = "";
             if(stm.equals("true")){
-                visit(ctx.block());
-                type = "void";
+                resultado = visit(ctx.block());
             }
+            return resultado;
         }
         else{
             //Error, el tipo de expression no es booleano
@@ -211,7 +215,7 @@ Visitador extends decafBaseVisitor<String> {
             return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
                     ". " + ctx.expression().getText()+ " no es una expression de tipo 'boolean'.\n";
         }
-        return visitChildren(ctx);
+
     }
     /**
      * {@inheritDoc}
@@ -222,14 +226,14 @@ Visitador extends decafBaseVisitor<String> {
     @Override public String visitIfElseDeclStm(decafParser.IfElseDeclStmContext ctx) {
         String stm = visit(ctx.expression());
         if(type.equals("boolean")){
+            String resultado  = "";
             if(stm.equals("true")){
-                visit(ctx.block(0));
-                type = "void";
-            }
+                resultado = visit(ctx.block(0));
+                            }
             else{
-                visit(ctx.block(1));
-                type = "void";
+                resultado = visit(ctx.block(1));
             }
+            return resultado;
         }
         else{
             //Error, el tipo de expression no es booleano
@@ -237,7 +241,6 @@ Visitador extends decafBaseVisitor<String> {
             return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
                     ". " + ctx.expression().getText()+ " no es una expression de tipo 'boolean'.\n";
         }
-        return visitChildren(ctx);
     }
     /**
      * {@inheritDoc}
@@ -248,10 +251,11 @@ Visitador extends decafBaseVisitor<String> {
     @Override public String visitWhileDeclStm(decafParser.WhileDeclStmContext ctx) {
         String stm = visit(ctx.expression());
         if(type.equals("boolean")){
+            String resultado = "";
             while(stm.equals("true")){
-                visit(ctx.block());
-                type = "void";
+                resultado  = visit(ctx.block());
             }
+            return resultado;
         }
         else{
             //Error, el tipo de expression no es booleano
@@ -259,7 +263,6 @@ Visitador extends decafBaseVisitor<String> {
             return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
                     ". " + ctx.expression().getText()+ " no es una expression de tipo 'boolean'.\n";
         }
-        return visitChildren(ctx);
     }
     /**
      * {@inheritDoc}
@@ -267,7 +270,10 @@ Visitador extends decafBaseVisitor<String> {
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitReturnStm(decafParser.ReturnStmContext ctx) { return visitChildren(ctx); }
+    @Override public String visitReturnStm(decafParser.ReturnStmContext ctx) {
+        type = "void";
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
@@ -284,7 +290,9 @@ Visitador extends decafBaseVisitor<String> {
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitCallMethodStm(decafParser.CallMethodStmContext ctx) {return visitChildren(ctx);
+    @Override public String visitCallMethodStm(decafParser.CallMethodStmContext ctx) {
+        String resultado = visit(ctx.methodCall());
+        return resultado;
     }
     /**
      * {@inheritDoc}
@@ -292,7 +300,10 @@ Visitador extends decafBaseVisitor<String> {
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitBlockStm(decafParser.BlockStmContext ctx) { return visitChildren(ctx); }
+    @Override public String visitBlockStm(decafParser.BlockStmContext ctx) {
+        String resultado = visit(ctx.block());
+        return resultado;
+    }
     /**
      * {@inheritDoc}
      *
@@ -306,10 +317,21 @@ Visitador extends decafBaseVisitor<String> {
 
         String returnValue = visit(ctx.location());
         String locationType = type;
-
+        Object temporal = objeto;
 
         String returnExpression = visit(ctx.expression());
         String expressionType = type;
+
+        if(locationType.equals(expressionType)){
+            temporal = objeto;
+        }
+        else{
+            //Error, los tipos de la asignacion no son iguales y no son null
+            type = "null";
+            return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                    ". " + ctx.location().getText() + " y " + ctx.expression().getText() + " no son del mismo tipo.\n";
+
+        }
 
 
 
@@ -322,14 +344,19 @@ Visitador extends decafBaseVisitor<String> {
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitEndStm(decafParser.EndStmContext ctx) { return visitChildren(ctx); }
+    @Override public String visitEndStm(decafParser.EndStmContext ctx) {
+        type = "void";
+        return visitChildren(ctx); }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitExpressionStm(decafParser.ExpressionStmContext ctx) { return visitChildren(ctx); }
+    @Override public String visitExpressionStm(decafParser.ExpressionStmContext ctx) {
+        String resultado = visit(ctx.expression());
+        return resultado;
+    }
     /**
      * {@inheritDoc}
      *
@@ -339,10 +366,21 @@ Visitador extends decafBaseVisitor<String> {
 
     @Override public String visitSimpleLoc(decafParser.SimpleLocContext ctx) {
         //Revisar si el ID existe y pertenece a un simbolo.
+        //Al visitar esto, el objeto se queda en la variable objeto
         String id = ctx.ID().getText();
-        boolean revision = revisarExistencia(id);
+        boolean revision = false;
+        if(objetoAnterior == null){
+            revision = revisarExistencia(id);
+        }
+        else{
+            objeto = objetoAnterior;
+            revision = true;
+        }
+
         if(revision){
             if(objeto instanceof Symbol){
+                type = objeto.getType();
+                objetoAnterior = null;
                 return id;
             }
             else if (objeto instanceof Method){
@@ -375,7 +413,16 @@ Visitador extends decafBaseVisitor<String> {
     @Override public String visitSimpleLocExpr(decafParser.SimpleLocExprContext ctx) {
         //Revisar si el ID existe y pertenece a un simbolo.
         String id = ctx.ID().getText();
-        boolean revision = revisarExistencia(id);
+        boolean revision = false;
+        if(objetoAnterior == null){
+            revision = revisarExistencia(id);
+        }
+        else{
+            objeto = objetoAnterior;
+            revision = true;
+
+        }
+
         if(revision){
             if(objeto instanceof Symbol){
                 String tipoSymbol = type;
@@ -425,47 +472,75 @@ Visitador extends decafBaseVisitor<String> {
         String id = ctx.ID().getText();
         String expresion = visit(ctx.expression());
         if(type.equals("int")){
-            boolean revision = revisarExistencia(id);
-            if(revision){
-                if(objeto instanceof Conjunto){
-                    Conjunto lista = (Conjunto) objeto;
-                    if(lista.isStruct()){
-                        String atributo = visit(ctx.location());
+            String possibleGuion = expresion.substring(0,1);
 
-                        if(!type.equals("null")){
-                            return visitChildren(ctx);
+            if(!possibleGuion.equals("-")){
+
+                boolean revision = false;
+                if(objetoAnterior == null){
+                    revision = revisarExistencia(id);
+                }else{
+                    objeto = objetoAnterior;
+                    revision = true;
+                }
+                if(revision){
+
+                    if(objeto instanceof Conjunto){
+                        Conjunto lista = (Conjunto) objeto;
+
+                        if(lista.isStruct()){
+                            String atributo = visit(ctx.location());
+
+                            if(!type.equals("null")){
+                                //obtener el objeto dentro de la lista
+                                Conjunto resultado = (Conjunto) objeto;
+                                type = resultado.getTipoStruct();
+                                int indice = Integer.parseInt(expresion);
+                                String respuesta = "" + resultado.getContenido().get(indice);
+                                objeto = (Elemento) resultado.getContenido().get(indice);
+                                return respuesta;
+
+                            }
+                            else{
+                                type = "null";
+                                return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                                        ". " + ctx.location().getText() + " no existe o no pudo ser encontrado.\n";
+                            }
+
                         }
                         else{
+                            //Contenido de la lista no es struct, marcar error.
                             type = "null";
                             return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
-                                    ". " + ctx.location().getText() + " no existe o no pudo ser encontrado.\n";
+                                    ". " + id + " no es una lista con Structs.\n";
                         }
 
                     }
                     else{
-                        //Contenido de la lista no es struct, marcar error.
+                        //Error, no es una lista, la estructura esta mal
                         type = "null";
                         return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
-                                ". " + id + " no es una lista con Structs.\n";
+                                ". " + ctx.ID().getText()+ " no es una lista, no puede obtenerse el [ "
+                                + ctx.expression().getText()+"] dato.\n";
                     }
 
                 }
                 else{
-                    //Error, no es una lista, la estructura esta mal
+                    //Error, ID no existente
                     type = "null";
                     return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
-                            ". " + ctx.ID().getText()+ " no es una lista, no puede obtenerse el [ "
-                            + ctx.expression().getText()+"] dato.\n";
+                            ". " + id + " no existe, no ha sido creado.\n";
+
                 }
 
             }
             else{
-                //Error, ID no existente
+                //Es un numero negativo
                 type = "null";
                 return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
-                        ". " + id + " no existe, no ha sido creado.\n";
-
+                        ". " + expresion + " no es un numero positivo..\n";
             }
+
 
         }
         else{
@@ -485,34 +560,55 @@ Visitador extends decafBaseVisitor<String> {
     @Override public String visitListLoc(decafParser.ListLocContext ctx) {
         //Revisar si el ID existe y pertenece a un simbolo.
         String id = ctx.ID().getText();
-        boolean revision = revisarExistencia(id);
+        boolean revision = false;
+        if(objetoAnterior == null){
+            revision = revisarExistencia(id);
+        }else{
+            objeto = objetoAnterior;
+            revision = true;
+        }
+
+
         if(revision){
             if(objeto instanceof List){
                 String tipoLista = type;
-                visit(ctx.expression());
+                String expresion = visit(ctx.expression());
                 if(type.equals("int")){
-                    //Obtener la instancia de Line
-                    Conjunto temporal = (Conjunto) objeto;
-                    try{
-                        int indice = Integer.parseInt(visit(ctx.expression()));
-                        String value = "" + temporal.getContenido().get(indice);
-                        type = tipoLista;
-                        return value;
+                    String posssibleGuion = expresion.substring(0,1);
+                    if(!posssibleGuion.equals("-")){
+                        //Obtener la instancia de Line
+                        Conjunto temporal = (Conjunto) objeto;
+                        try{
+                            int indice = Integer.parseInt(visit(ctx.expression()));
+                            String value = "" + temporal.getContenido().get(indice);
+                            type = tipoLista;
+                            objeto  = (Elemento) temporal.getContenido().get(indice);
+                            objetoAnterior = null;
+                            return value;
 
-                    }catch (Exception e ){
-                        type = "null";
-                        return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
-                                ". " + ctx.ID().getText() + " IndexOutOfBounds, posee:  "+ temporal.getCantElementos()+
-                                " elementos, se pidio el elemento " + ctx.expression().getText()+ ".\n";
+                        }catch (Exception IndexOutOfBounds ){
+                            type = "null";
+                            return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                                    ". " + ctx.ID().getText() + " IndexOutOfBounds, posee:  "+ temporal.getCantElementos()+
+                                    " elementos, se pidio el elemento " + ctx.expression().getText()+ ".\n";
+
+                        }
 
                     }
+                    else{
+                        //NUmero negativo
+                        //Expr no es de tipo int
+                        type = "null";
+                        return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                                ". " + expresion + " es un numero negativo, no puede ser indice.\n";
 
+                    }
                 }
                 else{
                     //Expr no es de tipo int
                     type = "null";
                     return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
-                            ". " + ctx.expression().getText() + " no es de tipo 'int'.\n";
+                            ". " + expresion + " no es de tipo 'int'.\n";
                 }
 
             }
@@ -550,6 +646,7 @@ Visitador extends decafBaseVisitor<String> {
                     if(Integer.parseInt(exp1) < Integer.parseInt(exp2)){
                         return "true";
                     }
+
                     else{
                         return "false";
                     }
