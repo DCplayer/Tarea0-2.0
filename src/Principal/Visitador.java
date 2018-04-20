@@ -315,28 +315,24 @@ Visitador extends decafBaseVisitor<String> {
         //Luego ver si, tienen el mismo tipo de dato
         //Realizar la asignacion
 
-        String returnValue = visit(ctx.location());
+        visit(ctx.location());
         String locationType = type;
         Object temporal = objeto;
 
-        String returnExpression = visit(ctx.expression());
+        visit(ctx.expression());
         String expressionType = type;
 
         if(locationType.equals(expressionType)){
             temporal = objeto;
+            type = "void";
+            return visitChildren(ctx);
         }
         else{
             //Error, los tipos de la asignacion no son iguales y no son null
             type = "null";
             return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
                     ". " + ctx.location().getText() + " y " + ctx.expression().getText() + " no son del mismo tipo.\n";
-
         }
-
-
-
-
-        return visitChildren(ctx);
     }
     /**
      * {@inheritDoc}
