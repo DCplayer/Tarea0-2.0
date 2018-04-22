@@ -40,7 +40,11 @@ parameterType:
            |'char'                                      # charParam
            |'boolean'                                   # boolParam;
 block:
-            '{' (varDeclaration| statement)* '}'        # blockDecl;
+            '{' (blockHelp)* '}'                        # blockDecl;
+blockHelp:
+        varDeclaration                                  # varDeclHelp
+        |statement                                      # stmHelp;
+
 statement:
             'if' '(' expression ')' block               # ifDeclStm
            |'if' '(' expression ')' block 'else' block  # ifElseDeclStm
@@ -74,7 +78,7 @@ expression:
 methodCall:
             ID '(' (arg (','arg)*)?  ')'                # methodCallDecl;
 arg:
-            expression                                  # expressionArg ;
+            parameterType ID                                  # expressionArg ;
 
 literal:
             NUM                                         # literalInt

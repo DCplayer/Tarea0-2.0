@@ -304,6 +304,30 @@ public class decafBaseListener implements decafListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterVarDeclHelp(decafParser.VarDeclHelpContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitVarDeclHelp(decafParser.VarDeclHelpContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterStmHelp(decafParser.StmHelpContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStmHelp(decafParser.StmHelpContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterIfDeclStm(decafParser.IfDeclStmContext ctx) { }
 	/**
 	 * {@inheritDoc}

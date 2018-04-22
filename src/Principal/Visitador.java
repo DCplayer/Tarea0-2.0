@@ -23,6 +23,7 @@ Visitador extends decafBaseVisitor<String> {
     private Elemento objetoAnterior = null;
 
 
+
     /**
      * {@inheritDoc}
      *
@@ -121,7 +122,26 @@ Visitador extends decafBaseVisitor<String> {
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitMethodDecl(decafParser.MethodDeclContext ctx) { return visitChildren(ctx); }
+    @Override public String visitMethodDecl(decafParser.MethodDeclContext ctx) {
+
+
+        //Crear un nuevo ambito donde se creara lo declarado
+        ArrayList<Tuplas> tuplas = new ArrayList<>();
+        SyTable nuevoAmbito4Method = new SyTable(tuplas);
+        verificadorAmbitos.push(nuevoAmbito4Method);
+
+        //Teniendo ya creado el ambito nuevo, iniciar las variables en este
+        SyTable ambitoActual = verificadorAmbitos.peek();
+        for(String s: argType){
+            int index = argType.indexOf(s);
+            String name = argSignature.get(index);
+            Elemento element = new Elemento(name, s, null);
+            Tuplas nuevaTupla = new Tuplas(name,  element);
+            tuplas.add(nuevaTupla);
+
+        }
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
@@ -226,22 +246,56 @@ Visitador extends decafBaseVisitor<String> {
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
+    @Override public String visitVarDeclHelp(decafParser.VarDeclHelpContext ctx) {
+        String retorno = visit(ctx.varDeclaration());
+        return retorno;
+    }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     */
+    @Override public String  visitStmHelp(decafParser.StmHelpContext ctx) {
+        String retorno = visit(ctx.statement());
+        return retorno;
+    }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     */
     @Override public String visitBlockDecl(decafParser.BlockDeclContext ctx) {
         //aqui se declara y destruye un nuevo ambito despues de hacer las visitas que tocan :D
         //New Sytable, push Sytable
 
         ArrayList<Tuplas> tuplas = new ArrayList<>();
+
+
+        //Teniendo ya creado el ambito nuevo, iniciar las variables en este
+        SyTable ambito = verificadorAmbitos.peek();
+        for(String s: argType){
+            int index = argType.indexOf(s);
+            String name = argSignature.get(index);
+            Elemento element = new Elemento(name, s, null);
+            Tuplas nuevaTupla = new Tuplas(name,  element);
+            tuplas.add(nuevaTupla);
+
+        }
         SyTable ambitoActual = new SyTable(tuplas);
         verificadorAmbitos.push(ambitoActual);
 
-        int numeroVar = ctx.varDeclaration().size();
-        int numeroStm = ctx.statement().size();
+        argType.clear();
+        argSignature.clear();
 
-        for(int i = 0; i < numeroVar; i++){
-            String uso = visit(ctx.varDeclaration(i));
-        }
-        for(int i = 0; i < numeroStm; i++){
-            String uso = visit(ctx.statement(i));
+
+
+        int numeroBlock = ctx.blockHelp().size();
+
+
+        for(int i = 0; i < numeroBlock; i++){
+            String uso = visit(ctx.blockHelp(i));
         }
         //Pop Sytable
         verificadorAmbitos.pop();
@@ -1084,7 +1138,6 @@ Visitador extends decafBaseVisitor<String> {
     @Override public String visitMethodCallDecl(decafParser.MethodCallDeclContext ctx) {
         //Chequear primero que existe el metodo
         String identificador = ctx.ID().getText();
-        SyTable ambitoActual = verificadorAmbitos.peek();
 
         boolean existente = revisarExistencia(identificador);
         if(objeto instanceof Method){
@@ -1099,12 +1152,11 @@ Visitador extends decafBaseVisitor<String> {
                     argType.add(type);
                 }
                 boolean firmaExistente = false;
-                for(ArrayList<String> ar: temporal.getTypeValue()){
-                    if(ar.equals(argType)){
-                        firmaExistente = true;
-                        type = temporal.getType();
-                    }
+                if(temporal.getTypeValue().contains(argType)){
+                    firmaExistente = true;
+                    type = temporal.getType();
                 }
+
                 if(!firmaExistente){
                     //Mostrar error porque del metodo, no existe con esa combinacion de parametros
                     type = "null";
@@ -1138,7 +1190,8 @@ Visitador extends decafBaseVisitor<String> {
      */
     @Override public String visitExpressionArg(decafParser.ExpressionArgContext ctx) {
         //Expresion de argumento, determinara el valor del argumento y el tipo del mismo
-        return visitChildren(ctx);
+        String prevencion = visit(ctx.varType());
+        return ctx.ID().getText();
     }
     /**
      * {@inheritDoc}

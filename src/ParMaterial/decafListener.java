@@ -296,6 +296,30 @@ public interface decafListener extends ParseTreeListener {
 	 */
 	void exitBlockDecl(decafParser.BlockDeclContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code varDeclHelp}
+	 * labeled alternative in {@link decafParser#blockHelp}.
+	 * @param ctx the parse tree
+	 */
+	void enterVarDeclHelp(decafParser.VarDeclHelpContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code varDeclHelp}
+	 * labeled alternative in {@link decafParser#blockHelp}.
+	 * @param ctx the parse tree
+	 */
+	void exitVarDeclHelp(decafParser.VarDeclHelpContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code stmHelp}
+	 * labeled alternative in {@link decafParser#blockHelp}.
+	 * @param ctx the parse tree
+	 */
+	void enterStmHelp(decafParser.StmHelpContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code stmHelp}
+	 * labeled alternative in {@link decafParser#blockHelp}.
+	 * @param ctx the parse tree
+	 */
+	void exitStmHelp(decafParser.StmHelpContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code ifDeclStm}
 	 * labeled alternative in {@link decafParser#statement}.
 	 * @param ctx the parse tree

@@ -179,6 +179,20 @@ public interface decafVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitBlockDecl(decafParser.BlockDeclContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code varDeclHelp}
+	 * labeled alternative in {@link decafParser#blockHelp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVarDeclHelp(decafParser.VarDeclHelpContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code stmHelp}
+	 * labeled alternative in {@link decafParser#blockHelp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStmHelp(decafParser.StmHelpContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code ifDeclStm}
 	 * labeled alternative in {@link decafParser#statement}.
 	 * @param ctx the parse tree
