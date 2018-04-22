@@ -40,10 +40,10 @@ parameterType:
            |'char'                                      # charParam
            |'boolean'                                   # boolParam;
 block:
-            '{' (varDeclaration| statement)* '}'          # blockDecl;
+            '{' (varDeclaration| statement)* '}'        # blockDecl;
 statement:
-            'if' '(' expression ')' block              # ifDeclStm
-           |'if' '(' expression ')' block 'else' block # ifElseDeclStm
+            'if' '(' expression ')' block               # ifDeclStm
+           |'if' '(' expression ')' block 'else' block  # ifElseDeclStm
            |'while' '(' expression')' block             # whileDeclStm
            |'return' ';'                                # returnStm
            |'return' expression';'                      # returnTypeStm
@@ -53,10 +53,10 @@ statement:
            |';'                                         # endStm
            |expression ';'                              # expressionStm;
 location:
-            ID                                          #simpleLoc
-            |ID '[' expression']'                       #listLoc
-            |ID '.' location                            #simpleLocExpr
-            |ID '['expression']' '.' location           #listLocExpr;
+            ID                                          # simpleLoc
+            |ID '[' expression']'                       # listLoc
+            |ID '.' location                            # simpleLocExpr
+            |ID '['expression']' '.' location           # listLocExpr;
 
 expression:
             location                                    # locationExp
