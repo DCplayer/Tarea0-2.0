@@ -1485,6 +1485,21 @@ public class decafParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
+	public static class EqOpExpContext extends ExpressionContext {
+		public Token op;
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public EqOpExpContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof decafVisitor ) return ((decafVisitor<? extends T>)visitor).visitEqOpExp(this);
+			else return visitor.visitChildren(this);
+		}
+	}
 	public static class NotExpContext extends ExpressionContext {
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
@@ -1523,21 +1538,6 @@ public class decafParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof decafVisitor ) return ((decafVisitor<? extends T>)visitor).visitSecondArithOpExp(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class EqOpExSympContext extends ExpressionContext {
-		public Token op;
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public EqOpExSympContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof decafVisitor ) return ((decafVisitor<? extends T>)visitor).visitEqOpExSymp(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1702,15 +1702,15 @@ public class decafParser extends Parser {
 						break;
 					case 4:
 						{
-						_localctx = new EqOpExSympContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new EqOpExpContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(205);
 						if (!(precpred(_ctx, 5))) throw new FailedPredicateException(this, "precpred(_ctx, 5)");
 						setState(206);
-						((EqOpExSympContext)_localctx).op = _input.LT(1);
+						((EqOpExpContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
 						if ( !(_la==T__29 || _la==T__30) ) {
-							((EqOpExSympContext)_localctx).op = (Token)_errHandler.recoverInline(this);
+							((EqOpExpContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 						}
 						else {
 							if ( _input.LA(1)==Token.EOF ) matchedEOF = true;

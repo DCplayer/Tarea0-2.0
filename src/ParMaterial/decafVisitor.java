@@ -326,6 +326,13 @@ public interface decafVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitParentExp(decafParser.ParentExpContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code eqOpExp}
+	 * labeled alternative in {@link decafParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEqOpExp(decafParser.EqOpExpContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code notExp}
 	 * labeled alternative in {@link decafParser#expression}.
 	 * @param ctx the parse tree
@@ -346,13 +353,6 @@ public interface decafVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitSecondArithOpExp(decafParser.SecondArithOpExpContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code eqOpExSymp}
-	 * labeled alternative in {@link decafParser#expression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitEqOpExSymp(decafParser.EqOpExSympContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code methodCallDecl}
 	 * labeled alternative in {@link decafParser#methodCall}.
