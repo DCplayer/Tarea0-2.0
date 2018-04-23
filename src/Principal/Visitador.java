@@ -5,6 +5,7 @@ import ParMaterial.decafParser;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import parser.*;
 
+import java.lang.reflect.Parameter;
 import java.security.interfaces.ECKey;
 import java.util.ArrayList;
 import java.util.List;
@@ -123,15 +124,25 @@ Visitador extends decafBaseVisitor<String> {
      * {@link #visitChildren} on {@code ctx}.</p>
      */
     @Override public String visitMethodDecl(decafParser.MethodDeclContext ctx) {
+        String id = ctx.ID().getText();
+        visit(ctx.methodType());
+        String tipo =type;
+        ArrayList<String> types = new ArrayList<>();
+
+
+        // hay que ver si existe y se crea una nueva signature o bien que
+        List<decafParser.ParameterContext> parametros = ctx.parameter();
+        for(decafParser.ParameterContext p: parametros){
+
+        }
 
 
         //Crear un nuevo ambito donde se creara lo declarado
         ArrayList<Tuplas> tuplas = new ArrayList<>();
-        SyTable nuevoAmbito4Method = new SyTable(tuplas);
-        verificadorAmbitos.push(nuevoAmbito4Method);
+
 
         //Teniendo ya creado el ambito nuevo, iniciar las variables en este
-        SyTable ambitoActual = verificadorAmbitos.peek();
+
         for(String s: argType){
             int index = argType.indexOf(s);
             String name = argSignature.get(index);
@@ -140,6 +151,13 @@ Visitador extends decafBaseVisitor<String> {
             tuplas.add(nuevaTupla);
 
         }
+        SyTable nuevoAmbito4Method = new SyTable(tuplas);
+        verificadorAmbitos.push(nuevoAmbito4Method);
+
+        argType.clear();
+        argSignature.clear();
+
+
         return visitChildren(ctx);
     }
     /**
@@ -148,28 +166,40 @@ Visitador extends decafBaseVisitor<String> {
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitIntMeth(decafParser.IntMethContext ctx) { return visitChildren(ctx); }
+    @Override public String visitIntMeth(decafParser.IntMethContext ctx) {
+        type = "int";
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitCharMeth(decafParser.CharMethContext ctx) { return visitChildren(ctx); }
+    @Override public String visitCharMeth(decafParser.CharMethContext ctx) {
+        type = "char";
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitBoolMeth(decafParser.BoolMethContext ctx) { return visitChildren(ctx); }
+    @Override public String visitBoolMeth(decafParser.BoolMethContext ctx) {
+        type = "boolean";
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitVoidMeth(decafParser.VoidMethContext ctx) { return visitChildren(ctx); }
+    @Override public String visitVoidMeth(decafParser.VoidMethContext ctx) {
+        type = "void";
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
@@ -177,8 +207,30 @@ Visitador extends decafBaseVisitor<String> {
      * {@link #visitChildren} on {@code ctx}.</p>
      */
     @Override public String visitParamType(decafParser.ParamTypeContext ctx) {
+        visit(ctx.parameterType());
+        String tipo = type;
+        String id = ctx.ID().getText();
+        boolean revisado = revisarExistencia(id);
 
-        return visitChildren(ctx);
+        if(revisado){
+            if(type.equals(tipo)){
+                return ctx.ID().getText();
+            }
+            else{
+                //Error, el tipo declarado y el tipo del ID no son compatibles
+                //Error, el tipo declarado y el tipo del ID no son compatibles
+                type = "null";
+                return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                        ". " + ctx.ID().getText()+ " no es de tipo  "+ type +" .\n";
+            }
+        }
+        else{
+            //Error ID no existe
+            type = "null";
+            return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                    ". " + ctx.ID().getText()+ " ha sido creada, no existe instancia de esta variable.\n";
+
+        }
     }
     /**
      * {@inheritDoc}
@@ -193,22 +245,37 @@ Visitador extends decafBaseVisitor<String> {
         boolean revisado = revisarExistencia(id);
 
         if(revisado){
-            if(type.equals(tipo)){
-                
+            if(objeto instanceof Conjunto){
 
+                if(type.equals(tipo)){
+
+                    return ctx.ID().getText();
+
+                }
+                else{
+                    //Error, el tipo declarado y el tipo del ID no son compatibles
+                    type = "null";
+                    return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                            ". " + ctx.ID().getText()+ " no es de tipo  "+ type +" .\n";
+                }
             }
             else{
-                //Error,
+                //Error no es una lista
+                type = "null";
+                return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                        ". " + ctx.ID().getText()+ " no es una lista.\n";
+
             }
         }
         else{
-            //ERror ID no existe
+            //Error ID no existe
+            type = "null";
+            return error+="Error in line:" + ctx.getStart().getLine()+", "+ ctx.getStart().getCharPositionInLine()+
+                    ". " + ctx.ID().getText()+ " ha sido creada, no existe instancia de esta variable.\n";
 
         }
 
 
-
-        return visitChildren(ctx);
     }
     /**
      * {@inheritDoc}
