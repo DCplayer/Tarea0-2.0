@@ -10,7 +10,7 @@ public class Symbol extends Elemento {
     private Stack<SyTable> symbolTable;
 
 
-    public Symbol(String name, String type, ArrayList<ArrayList<String>> signature, String returnValue, boolean isStruct, Stack<SyTable> symbolTable) {
+    public Symbol(String name, String type, ArrayList<String> signature, String returnValue, boolean isStruct, Stack<SyTable> symbolTable) {
         super(name, type, signature);
         this.returnValue = returnValue;
         this.isStruct = isStruct;

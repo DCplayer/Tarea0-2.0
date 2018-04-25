@@ -2,6 +2,7 @@ package Principal;
 
 import ParMaterial.decafBaseVisitor;
 import ParMaterial.decafParser;
+import com.sun.org.apache.xerces.internal.util.SymbolTable;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import parser.*;
 
@@ -22,6 +23,7 @@ Visitador extends decafBaseVisitor<String> {
     private Elemento objeto;
     private String locationID;
     private Elemento objetoAnterior = null;
+    private Method recentlyCreated = new Method(null, null,  null, null, null, null  );
 
 
 
@@ -31,7 +33,15 @@ Visitador extends decafBaseVisitor<String> {
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitInitProgram(decafParser.InitProgramContext ctx) { return visitChildren(ctx); }
+    @Override public String visitInitProgram(decafParser.InitProgramContext ctx) {
+        List<decafParser.DeclarationContext> dc = ctx.declaration();
+
+        for(decafParser.DeclarationContext g: dc){
+            visit(g);
+        }
+        return  visitChildren(ctx); 
+
+    }
 
     /**
      * {@inheritDoc}
@@ -39,84 +49,160 @@ Visitador extends decafBaseVisitor<String> {
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitDeclaraionStruct(decafParser.DeclaraionStructContext ctx) { return visitChildren(ctx); }
+    @Override public String visitDeclaraionStruct(decafParser.DeclaraionStructContext ctx) {
+        return visit(ctx.structDeclaration());
+    }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitDeclarationVar(decafParser.DeclarationVarContext ctx) { return visitChildren(ctx); }
+    @Override public String visitDeclarationVar(decafParser.DeclarationVarContext ctx) {
+        return visit(ctx.varDeclaration());
+    }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitDeclarationMethod(decafParser.DeclarationMethodContext ctx) { return visitChildren(ctx); }
+    @Override public String visitDeclarationMethod(decafParser.DeclarationMethodContext ctx) {
+        return visit(ctx.methodDeclaration());
+    }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitNotValuedVar(decafParser.NotValuedVarContext ctx) { return visitChildren(ctx); }
+    @Override public String visitNotValuedVar(decafParser.NotValuedVarContext ctx) {
+        //varType ID ';'
+        type = visit(ctx.varType());
+        String id = ctx.ID().getText();
+
+        //name , type, signature, return value, isStruct, symbolTable
+        Symbol simbolo = new Symbol(id, type, null, type, false, null);
+        SyTable tabla  = verificadorAmbitos.peek();
+        Tuplas tupla = new Tuplas(simbolo.getName(), simbolo);
+        tabla.getTablaDeSimbolos().add(tupla);
+
+
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitNotValuedList(decafParser.NotValuedListContext ctx) { return visitChildren(ctx); }
+    @Override public String visitNotValuedList(decafParser.NotValuedListContext ctx) {
+        //varType ID '[' NUM ']' ';'
+
+        type = visit(ctx.varType());
+        String id = ctx.ID().getText();
+
+        Integer num = Integer.parseInt(ctx.NUM().getText());
+        //name, type, signature, cantElement, isStruct, tipoStruct
+        boolean isStruct = false;
+        String tipoStruct = null;
+
+        if(!(type.equals("int") || type.equals("boolean") || type.equals("char")|| type.equals("void"))){
+            isStruct = true;
+            tipoStruct = id;
+        }
+        Conjunto lista = new Conjunto(id, type, null, num , isStruct, tipoStruct);
+        Tuplas tupla = new Tuplas(lista.getName(), lista);
+        SyTable tabla = verificadorAmbitos.peek();
+        tabla.getTablaDeSimbolos().add(tupla);
+
+
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitStructDecl(decafParser.StructDeclContext ctx) { return visitChildren(ctx); }
+    @Override public String visitStructDecl(decafParser.StructDeclContext ctx) {
+        //'struct' ID '{' varDeclaration* '}'
+        type = ctx.ID().getText();
+        String id = ctx.ID().getText();
+
+        //name, type, signature, return value, isStruct, symbolTable
+
+        Symbol struct = new Symbol(id, type, null, id, true, null);
+        SyTable temporal = verificadorAmbitos.peek();
+        Tuplas nuevaTupla = new Tuplas(struct.getName(), struct);
+        temporal.getTablaDeSimbolos().add(nuevaTupla);
+
+        List<decafParser.VarDeclarationContext> vc = ctx.varDeclaration();
+        for(decafParser.VarDeclarationContext g: vc){
+            String varDec = visit(g);
+        }
+
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitIntVar(decafParser.IntVarContext ctx) { return visitChildren(ctx); }
+    @Override public String visitIntVar(decafParser.IntVarContext ctx) {
+        type = "int";
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitCharVar(decafParser.CharVarContext ctx) { return visitChildren(ctx); }
+    @Override public String visitCharVar(decafParser.CharVarContext ctx) {
+        type = "char";
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitBoolVar(decafParser.BoolVarContext ctx) { return visitChildren(ctx); }
+    @Override public String visitBoolVar(decafParser.BoolVarContext ctx) {
+        type = "boolean";
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitStructVar(decafParser.StructVarContext ctx) { return visitChildren(ctx); }
+    @Override public String visitStructVar(decafParser.StructVarContext ctx) {
+        type = ctx.ID().getText();
+        return visitChildren(ctx); }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitStructDeclVar(decafParser.StructDeclVarContext ctx) { return visitChildren(ctx); }
+    @Override public String visitStructDeclVar(decafParser.StructDeclVarContext ctx) {
+        String retorno = visit(ctx.structDeclaration());
+        return retorno;
+    }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    @Override public String visitVoidVar(decafParser.VoidVarContext ctx) { return visitChildren(ctx); }
+    @Override public String visitVoidVar(decafParser.VoidVarContext ctx) {
+        type = "void";
+        return visitChildren(ctx);
+    }
     /**
      * {@inheritDoc}
      *
@@ -127,37 +213,20 @@ Visitador extends decafBaseVisitor<String> {
         String id = ctx.ID().getText();
         visit(ctx.methodType());
         String tipo =type;
-        ArrayList<String> types = new ArrayList<>();
-
 
         // hay que ver si existe y se crea una nueva signature o bien que
         List<decafParser.ParameterContext> parametros = ctx.parameter();
         for(decafParser.ParameterContext p: parametros){
-
+            String parametro = visit(p);
+            argType.add(type);
+            argSignature.add(parametro);
         }
 
+        //Falta crear el Metodo :D
+        //name, type, signature, return value, type value, symbolTable
+        recentlyCreated = new Method(id, tipo, argType, argSignature, argType, null);
 
-        //Crear un nuevo ambito donde se creara lo declarado
-        ArrayList<Tuplas> tuplas = new ArrayList<>();
-
-
-        //Teniendo ya creado el ambito nuevo, iniciar las variables en este
-
-        for(String s: argType){
-            int index = argType.indexOf(s);
-            String name = argSignature.get(index);
-            Elemento element = new Elemento(name, s, null);
-            Tuplas nuevaTupla = new Tuplas(name,  element);
-            tuplas.add(nuevaTupla);
-
-        }
-        SyTable nuevoAmbito4Method = new SyTable(tuplas);
-        verificadorAmbitos.push(nuevoAmbito4Method);
-
-        argType.clear();
-        argSignature.clear();
-
-
+        visit(ctx.block());
         return visitChildren(ctx);
     }
     /**
@@ -350,6 +419,10 @@ Visitador extends decafBaseVisitor<String> {
             tuplas.add(nuevaTupla);
 
         }
+        if(!recentlyCreated.getName().equals(null)){
+            Tuplas tuplaextra = new Tuplas(recentlyCreated.getName(), recentlyCreated);
+        }
+
         SyTable ambitoActual = new SyTable(tuplas);
         verificadorAmbitos.push(ambitoActual);
 

@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 public class Method extends Elemento {
-    private ArrayList<ArrayList<String>> returnValue;
-    private ArrayList<ArrayList<String>> typeValue;
+    private ArrayList<ArrayList<String>> returnValue = new ArrayList<>();
+    private ArrayList<ArrayList<String>> typeValue= new ArrayList<>();
     private Stack<SyTable> symbolTable;
 
-    public Method(String name, String type, ArrayList<ArrayList<String>> signature, ArrayList<ArrayList<String>> returnValue, ArrayList<ArrayList<String>> typeValue ,Stack<SyTable> symbolTable) {
+    public Method(String name, String type, ArrayList<String> signature, ArrayList<String> returnValue, ArrayList<String> typeValue ,Stack<SyTable> symbolTable) {
         super(name, type, signature);
-        this.returnValue = returnValue;
+        this.returnValue.add(returnValue);
         this.symbolTable = symbolTable;
-        this.typeValue = typeValue;
+        this.typeValue.add(typeValue);
     }
 
     public ArrayList<ArrayList<String>> getReturnValue() {
